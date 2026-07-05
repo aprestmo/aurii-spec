@@ -2,6 +2,7 @@ export type EntityState = "active" | "archived" | "deleted";
 
 export interface Entity {
   id: string;
+  datasetId: string;
   schemaId: string;
   data: Record<string, unknown>;
   state: EntityState;

@@ -21,16 +21,12 @@ export function runStep(
 ): PipelineStepResult {
   switch (step.type) {
     case "map": {
+      // The mapping is the contract: only mapped fields survive.
       const mapped: Record<string, unknown> = {};
       for (const [schemaField, sourceField] of Object.entries(step.mapping)) {
         if (sourceField in ctx.row) {
           mapped[schemaField] = ctx.row[sourceField];
         }
-      }
-      // Preserve unmapped fields from the original row
-      for (const [k, v] of Object.entries(ctx.row)) {
-        if (!(k in mapped) && Object.values(step.mapping).includes(k)) continue;
-        if (!(k in mapped)) mapped[k] = v;
       }
       return { ok: true, row: mapped, errors: [] };
     }

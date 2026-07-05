@@ -28,6 +28,7 @@ export interface SchemaDefinition {
 
 export interface StoredSchema {
   id: string;
+  datasetId: string;
   name: string;
   description?: string;
   version: number;

@@ -33,8 +33,8 @@ function tryParseDate(value: string): string | null {
   return null;
 }
 
-const TRUTHY = new Set(["true", "1", "yes", "on", "y"]);
-const FALSY  = new Set(["false", "0", "no", "off", "n", ""]);
+const TRUTHY = new Set(["true", "1", "yes", "on", "y", "ja"]);
+const FALSY  = new Set(["false", "0", "no", "off", "n", "nei", ""]);
 
 export function applyTransform(
   value: unknown,

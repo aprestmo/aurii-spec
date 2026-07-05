@@ -1,8 +1,8 @@
-# @aurii/core — Phase 1
+# @aurii/core — Phase 2
 
-> The smallest possible Aurii that works.
+> The smallest possible Aurii that works — now with real storage.
 
-This is the Phase 1 implementation of Aurii: an import-first Core that proves the fundamental loop:
+The Aurii Core Runtime: import-first, schema-driven, storage-agnostic.
 
 **External data → Declarative mapping → Entity storage → Query**
 
@@ -17,44 +17,87 @@ bun install
 # Register a schema
 bun run cli schema apply examples/schemas/article.yaml
 
-# Import real data
+# Import real data (dry run first)
+bun run cli import run examples/imports/articles.yaml --dry-run
 bun run cli import run examples/imports/articles.yaml
 
 # Query it
 bun run cli query "from article where published == true"
 bun run cli query "from article select title, author order by publishedAt desc"
-bun run cli query "from article where title contains 'Import'"
+
+# Serve the HTTP API (used by Studio)
+bun run cli serve
 ```
+
+## Storage
+
+Two interchangeable storage adapters behind one interface. The Query Language
+parser produces an AST; each adapter translates it to its own SQL dialect.
+
+| Variable          | Values                     | Default    |
+|-------------------|----------------------------|------------|
+| `AURII_STORAGE`   | `sqlite` \| `postgres`     | `sqlite`   |
+| `AURII_DB_PATH`   | SQLite file path           | `aurii.db` |
+| `DATABASE_URL`    | PostgreSQL connection URL  | —          |
+| `AURII_API_TOKEN` | Protect the HTTP API       | (open)     |
+
+```bash
+# PostgreSQL
+export AURII_STORAGE=postgres
+export DATABASE_URL="postgres://user:pass@localhost:5432/aurii"
+bun run cli serve
+```
+
+SQLite is for zero-config development. PostgreSQL (JSONB) is the production target.
+
+## Datasets
+
+A project can hold multiple datasets with different kinds of data:
+
+```bash
+bun run cli dataset create editorial "Editorial content"
+bun run cli schema apply examples/schemas/article.yaml --dataset editorial
+bun run cli import run examples/imports/articles.yaml --dataset editorial
+bun run cli query "from article limit 10" --dataset editorial
+```
+
+A `default` dataset always exists and is used when `--dataset` is omitted.
 
 ## What's included
 
 | Component | Description |
 |-----------|-------------|
 | **Schema Language v0** | YAML-based schema definitions (fields, types, validation) |
-| **Import Engine v0** | CSV and JSON sources, declarative field mapping |
+| **Import Engine v0** | CSV and JSON sources, declarative field mapping, dry run |
+| **Import analysis** | Format, delimiter, column, and type detection; schema suggestion |
 | **Pipeline v0** | map → transform → validate → persist steps |
-| **Query Language v0** | Readable text queries with `from`, `where`, `select`, `order by`, `limit` |
-| **Entity Store** | SQLite-backed entity storage (zero config) |
-| **CLI** | `schema`, `import`, `query`, `entity` commands |
-| **HTTP API** | Minimal REST API for programmatic access |
+| **Query Language v0** | `from`, `where`, `select`, `order by`, `limit`, `offset` |
+| **Storage adapters** | SQLite (dev) and PostgreSQL JSONB (production) |
+| **Datasets** | Multiple named datasets per deployment |
+| **CLI** | `dataset`, `schema`, `import`, `query`, `entity`, `serve` |
+| **HTTP API** | REST API with token auth, uploads, dry runs, and stats |
 
 ## CLI reference
 
 ```bash
+# Datasets
+bun run cli dataset create <id> <name>
+bun run cli dataset list
+
 # Schemas
-bun run cli schema apply <file.yaml>
-bun run cli schema list
-bun run cli schema get <id>
+bun run cli schema apply <file.yaml> [--dataset <id>]
+bun run cli schema list [--dataset <id>]
+bun run cli schema get <id> [--dataset <id>]
 
 # Imports
-bun run cli import run <file.yaml>
+bun run cli import run <file.yaml> [--dataset <id>] [--dry-run]
 
 # Queries
-bun run cli query "from <schema> [select <fields>] [where <conditions>] [order by <field>] [limit <n>]"
+bun run cli query "<query>" [--dataset <id>]
 
 # Entities
 bun run cli entity get <id>
-bun run cli entity list <schema> [--limit <n>]
+bun run cli entity list <schema> [--dataset <id>] [--limit <n>]
 
 # HTTP API server
 bun run cli serve [--port 3000]
@@ -69,18 +112,38 @@ from article where published == true
 from article where published == true order by publishedAt desc limit 20
 from article where title contains "hello"
 from article select title, slug, author where published == true
+from product where price > 100 order by price desc
 ```
 
-### Operators
+**Operators:** `==` `!=` `>` `<` `>=` `<=` `contains`
 
-`==`  `!=`  `>`  `<`  `>=`  `<=`  `contains`
+## HTTP API
+
+```
+GET  /health                        (no auth)
+GET  /datasets
+POST /datasets                      { id, name, description? }
+GET  /schemas?dataset=
+POST /schemas?dataset=
+GET  /schemas/:id?dataset=
+GET  /entities?schema=&dataset=&limit=&offset=
+GET  /entities/:id
+GET  /query?q=<query>&dataset=
+POST /import/analyze                multipart file → analysis + uploadId
+POST /import/run                    { uploadId, schemaId, datasetId, mapping, transforms, dryRun }
+POST /import                        { path } — YAML definition (Phase 1)
+GET  /imports?dataset=              import history
+GET  /stats?dataset=                dashboard aggregates
+```
+
+If `AURII_API_TOKEN` is set, all routes except `/health` require
+`Authorization: Bearer <token>`.
 
 ## Schema format
 
 ```yaml
 id: article
 name: Article
-description: A published article
 fields:
   - name: title
     type: string
@@ -100,53 +163,28 @@ fields:
 id: import-articles
 name: Import Articles
 schema: article
+dataset: editorial          # optional, defaults to "default"
 source:
-  type: csv        # or: json
+  type: csv                 # or: json
   path: ./examples/data/articles.csv
 pipeline:
   steps:
     - type: map
       mapping:
-        title: Title           # schema field: source column
-        published: Published
+        title: Title        # schema field: source column
     - type: transform
       transforms:
         - field: published
-          fn: toBoolean        # toBoolean | toNumber | toDate | toSlug | trim | ...
+          fn: toBoolean     # toBoolean | toNumber | toDate | toSlug | trim | …
     - type: validate
     - type: persist
 ```
 
-## HTTP API
+## Studio
 
-```
-GET  /health
-GET  /schemas
-POST /schemas              { ...schema definition }
-GET  /schemas/:id
-GET  /entities/:id
-GET  /query?q=<query>
-POST /import               { "path": "./examples/imports/articles.yaml" }
-```
-
-## Storage
-
-Phase 1 uses SQLite (`aurii.db` in working directory). The storage layer is abstracted — PostgreSQL is the production target for Phase 2.
-
-Set `AURII_DB_PATH` to use a custom database file location.
-
-## What Phase 1 proves
-
-The Phase 1 success criterion (from `Phase1.md`):
-
-```bash
-bun run cli schema apply examples/schemas/article.yaml
-bun run cli import run examples/imports/articles.yaml
-bun run cli query "from article where published == true"
-```
-
-Returns a valid JSON array of entities. ✓
+The visual client lives in [`packages/studio`](../studio) — an Astro app with
+an Import Wizard, Dashboard, and Entity Browser. It consumes only this API.
 
 ---
 
-*Phase 1 is intentionally minimal. No Studio. No AI. No plugins. No enterprise abstractions. Just the core loop — working.*
+*See `Phase1.md` and `Phase2.md` in the repository root for scope and rationale.*

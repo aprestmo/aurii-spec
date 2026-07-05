@@ -1,0 +1,125 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Entities" active="entities">
+  <h1>Entities</h1>
+  <p class="subtitle">Browse and inspect stored entities.</p>
+
+  <div class="flex" style="margin-bottom: 16px;">
+    <select id="schema-filter" style="max-width: 280px;"></select>
+    <input id="query-input" placeholder='Optional query, e.g. where published == true limit 20'
+           style="flex: 1;" />
+    <button class="btn" id="run-query">Run</button>
+  </div>
+
+  <div class="card" id="results">
+    <p class="muted">Select a schema to browse entities.</p>
+  </div>
+
+  <div class="flex mt hidden" id="pagination">
+    <button class="btn secondary" id="prev-page">Previous</button>
+    <span class="muted" id="page-info"></span>
+    <button class="btn secondary" id="next-page">Next</button>
+  </div>
+
+  <script>
+    import { api, getDataset } from "../lib/api";
+
+    interface Entity {
+      id: string;
+      schemaId: string;
+      data: Record<string, unknown>;
+      createdAt: string;
+    }
+
+    const ds = getDataset();
+    const PAGE = 25;
+    let offset = 0;
+    let total = 0;
+    let currentSchema = "";
+
+    const schemaFilter = document.getElementById("schema-filter") as HTMLSelectElement;
+    const queryInput = document.getElementById("query-input") as HTMLInputElement;
+    const results = document.getElementById("results")!;
+
+    const schemas = await api<{ id: string; name: string }[]>(`/schemas?dataset=${ds}`);
+    schemaFilter.innerHTML =
+      '<option value="">Choose schema…</option>' +
+      schemas.map((s) => `<option value="${s.id}">${s.name}</option>`).join("");
+
+    schemaFilter.addEventListener("change", () => {
+      currentSchema = schemaFilter.value;
+      offset = 0;
+      if (currentSchema) load();
+    });
+
+    document.getElementById("run-query")!.addEventListener("click", runQuery);
+    queryInput.addEventListener("keydown", (e) => { if (e.key === "Enter") runQuery(); });
+
+    document.getElementById("prev-page")!.addEventListener("click", () => {
+      offset = Math.max(0, offset - PAGE);
+      load();
+    });
+    document.getElementById("next-page")!.addEventListener("click", () => {
+      if (offset + PAGE < total) { offset += PAGE; load(); }
+    });
+
+    async function load() {
+      const res = await api<{ entities: Entity[]; total: number }>(
+        `/entities?schema=${currentSchema}&dataset=${ds}&limit=${PAGE}&offset=${offset}`
+      );
+      total = res.total;
+      render(res.entities);
+      const pag = document.getElementById("pagination")!;
+      pag.classList.toggle("hidden", total <= PAGE);
+      document.getElementById("page-info")!.textContent =
+        `${offset + 1}–${Math.min(offset + PAGE, total)} of ${total}`;
+    }
+
+    async function runQuery() {
+      if (!currentSchema && !queryInput.value.trim()) return;
+      const q = queryInput.value.trim()
+        ? `from ${currentSchema} ${queryInput.value.trim()}`
+        : `from ${currentSchema}`;
+      try {
+        const res = await api<{ entities: Entity[]; count: number }>(
+          `/query?dataset=${ds}&q=${encodeURIComponent(q)}`
+        );
+        document.getElementById("pagination")!.classList.add("hidden");
+        render(res.entities);
+      } catch (e) {
+        results.innerHTML = `<div class="error-box">${String(e)}</div>`;
+      }
+    }
+
+    function render(entities: Entity[]) {
+      if (entities.length === 0) {
+        results.innerHTML = `<p class="muted">No entities found.</p>`;
+        return;
+      }
+      const keys = Object.keys(entities[0]!.data).slice(0, 5);
+      const header = keys.map((k) => `<th>${k}</th>`).join("");
+      const rows = entities.map((e) => {
+        const cells = keys.map((k) => {
+          let v = e.data[k];
+          let s = v === null || v === undefined ? "—" : String(v);
+          if (s.length > 60) s = s.slice(0, 60) + "…";
+          return `<td>${s}</td>`;
+        }).join("");
+        return `<tr data-id="${e.id}" style="cursor:pointer">${cells}</tr>
+                <tr class="hidden" data-detail="${e.id}"><td colspan="${keys.length}">
+                  <pre class="json">${JSON.stringify(e, null, 2)}</pre>
+                </td></tr>`;
+      }).join("");
+      results.innerHTML = `<table><thead><tr>${header}</tr></thead><tbody>${rows}</tbody></table>`;
+
+      results.querySelectorAll("tr[data-id]").forEach((tr) =>
+        tr.addEventListener("click", () => {
+          const id = (tr as HTMLElement).dataset.id;
+          results.querySelector(`tr[data-detail="${id}"]`)!.classList.toggle("hidden");
+        })
+      );
+    }
+  </script>
+</Layout>

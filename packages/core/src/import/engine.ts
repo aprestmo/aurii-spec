@@ -1,13 +1,16 @@
-import { resolve, dirname } from "path";
+import { resolve } from "path";
 import { parse as parseYaml } from "yaml";
-import { getSchema } from "../schema/registry";
-import { createEntities } from "../entity/store";
+import { getStorage, DEFAULT_DATASET } from "../storage";
 import { runPipeline } from "../pipeline/runner";
 import { readCsvFile } from "./sources/csv";
 import { readJsonFile } from "./sources/json";
-import { getDb } from "../db/client";
 import type { ImportDefinition, ImportResult, RowError } from "./types";
 import type { EntityInput } from "../entity/types";
+
+export interface RunImportOptions {
+  datasetId?: string;
+  dryRun?: boolean;
+}
 
 export async function loadImportDefinition(filePath: string): Promise<ImportDefinition> {
   const file = Bun.file(filePath);
@@ -38,58 +41,55 @@ async function loadRows(
 
 export async function runImport(
   def: ImportDefinition,
-  basePath: string = process.cwd()
+  basePath: string = process.cwd(),
+  options: RunImportOptions = {}
 ): Promise<ImportResult> {
   const startedAt = Date.now();
-  const db = getDb();
+  const storage = await getStorage();
+  const datasetId = options.datasetId ?? def.dataset ?? DEFAULT_DATASET;
+  const dryRun = options.dryRun ?? false;
   const runId = crypto.randomUUID();
 
-  // Resolve schema
-  const schema = getSchema(def.schema);
+  const schema = await storage.getSchema(def.schema, datasetId);
   if (!schema) {
-    throw new Error(`Schema "${def.schema}" not found. Register it first with: aurii schema apply`);
+    throw new Error(
+      `Schema "${def.schema}" not found in dataset "${datasetId}". Register it first.`
+    );
   }
 
-  // Record import run
-  db.prepare(`
-    INSERT INTO aurii_import_runs (id, definition_id, schema_id, status, started_at)
-    VALUES (?, ?, ?, 'running', ?)
-  `).run(runId, def.id, def.schema, new Date().toISOString());
+  await storage.recordImportRun({
+    id: runId,
+    definitionId: def.id,
+    datasetId,
+    schemaId: def.schema,
+    status: "running",
+    dryRun,
+    total: 0,
+    imported: 0,
+    failed: 0,
+    errors: [],
+    startedAt: new Date().toISOString(),
+    completedAt: null,
+  });
 
-  // Load source rows
   const rows = await loadRows(def, basePath);
   const total = rows.length;
   const errors: RowError[] = [];
   const toInsert: EntityInput[] = [];
 
-  // Run pipeline over each row
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i]!;
 
-    const result = runPipeline(
-      def.pipeline.steps,
-      row as Record<string, unknown>,
-      schema,
-      i + 1
-    );
+    const result = runPipeline(def.pipeline.steps, row, schema, i + 1);
 
     if (!result.ok) {
-      errors.push({
-        row: i + 1,
-        message: result.errors.join("; "),
-        data: row as Record<string, unknown>,
-      });
+      errors.push({ row: i + 1, message: result.errors.join("; "), data: row });
     } else {
-      // Only include fields defined in the schema
       const cleanData: Record<string, unknown> = {};
       for (const field of schema.fields) {
-        if (field.name in result.row) {
-          const v = result.row[field.name];
-          if (v !== null && v !== undefined && v !== "") {
-            cleanData[field.name] = v;
-          } else if (field.default !== undefined) {
-            cleanData[field.name] = field.default;
-          }
+        const v = result.row[field.name];
+        if (v !== null && v !== undefined && v !== "") {
+          cleanData[field.name] = v;
         } else if (field.default !== undefined) {
           cleanData[field.name] = field.default;
         }
@@ -98,37 +98,35 @@ export async function runImport(
     }
   }
 
-  // Batch persist
-  if (toInsert.length > 0) {
-    createEntities(toInsert);
+  if (!dryRun && toInsert.length > 0) {
+    await storage.insertEntities(toInsert, datasetId);
   }
 
   const imported = toInsert.length;
   const failed = errors.length;
   const durationMs = Date.now() - startedAt;
 
-  // Update import run record
-  db.prepare(`
-    UPDATE aurii_import_runs
-    SET status = ?, total = ?, imported = ?, failed = ?, errors = ?, completed_at = ?
-    WHERE id = ?
-  `).run(
-    failed > 0 && imported === 0 ? "failed" : failed > 0 ? "partial" : "completed",
+  await storage.updateImportRun(runId, {
+    status: failed > 0 && imported === 0 ? "failed" : failed > 0 ? "partial" : "completed",
     total,
     imported,
     failed,
-    JSON.stringify(errors),
-    new Date().toISOString(),
-    runId
-  );
+    errors,
+    completedAt: new Date().toISOString(),
+  });
 
   return {
     definitionId: def.id,
     schemaId: def.schema,
+    datasetId,
+    dryRun,
     total,
     imported,
     failed,
     errors,
     durationMs,
+    // In dry-run mode, include a sample of transformed rows so the wizard
+    // can show the user exactly what would be written.
+    sample: dryRun ? toInsert.slice(0, 10).map((e) => e.data) : undefined,
   };
 }

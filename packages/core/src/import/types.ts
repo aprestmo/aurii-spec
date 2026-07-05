@@ -54,6 +54,8 @@ export interface ImportDefinition {
   id: string;
   name: string;
   schema: string;
+  /** Target dataset; defaults to "default" */
+  dataset?: string;
   source: Source;
   pipeline: ImportPipeline;
 }
@@ -67,9 +69,13 @@ export interface RowError {
 export interface ImportResult {
   definitionId: string;
   schemaId: string;
+  datasetId: string;
+  dryRun: boolean;
   total: number;
   imported: number;
   failed: number;
   errors: RowError[];
   durationMs: number;
+  /** Present in dry-run mode: sample of the rows that would be written */
+  sample?: Record<string, unknown>[];
 }
