@@ -209,12 +209,45 @@ export function evaluateCondition(
 }
 
 /** Build SQL-friendly WHERE for simple conditions (non-EXISTS, non-IN with many values). */
+export type SqlDialect = "sqlite" | "postgres";
+
 export function whereExprToSqlClauses(
 	expr: WhereExpr,
 	fieldPath: (field: string) => string,
 	bind: (value: unknown) => string,
+	dialect: SqlDialect = "sqlite",
 ): string[] {
 	const clauses: string[] = [];
+
+	function compareClause(
+		path: string,
+		op: string,
+		value: unknown,
+	): string {
+		const ops: Record<string, string> = {
+			"==": "=",
+			"!=": "!=",
+			">": ">",
+			"<": "<",
+			">=": ">=",
+			"<=": "<=",
+		};
+		const sqlOp = ops[op]!;
+
+		if (typeof value === "number") {
+			if (dialect === "postgres") {
+				return `(${path})::numeric ${sqlOp} ${bind(value)}`;
+			}
+			return `${path} ${sqlOp} ${bind(value)}`;
+		}
+		if (typeof value === "boolean") {
+			if (dialect === "postgres") {
+				return `(${path})::boolean ${sqlOp} ${bind(value)}`;
+			}
+			return `${path} ${sqlOp} ${bind(value ? 1 : 0)}`;
+		}
+		return `${path} ${sqlOp} ${bind(value)}`;
+	}
 
 	function walk(e: WhereExpr): void {
 		if (e.type === "condition") {
@@ -222,32 +255,20 @@ export function whereExprToSqlClauses(
 			if (c.op === "exists") return; // handled in-memory
 			const path = fieldPath(c.field);
 			if (c.op === "in" && Array.isArray(c.value)) {
-				const parts = c.value.map((v) => {
-					const param = bind(v);
-					return `${path} = ${param}`;
-				});
+				const parts = c.value.map((v) => compareClause(path, "==", v));
 				clauses.push(`(${parts.join(" OR ")})`);
 				return;
 			}
 			if (c.op === "contains") {
-				clauses.push(`${path} LIKE ${bind(`%${c.value}%`)}`);
+				const likeOp = dialect === "postgres" ? "ILIKE" : "LIKE";
+				clauses.push(`${path} ${likeOp} ${bind(`%${c.value}%`)}`);
 				return;
 			}
 			if (c.value === null) {
 				clauses.push(c.op === "==" ? `${path} IS NULL` : `${path} IS NOT NULL`);
 				return;
 			}
-			const val =
-				typeof c.value === "boolean" ? (c.value ? 1 : 0) : c.value;
-			const ops: Record<string, string> = {
-				"==": "=",
-				"!=": "!=",
-				">": ">",
-				"<": "<",
-				">=": ">=",
-				"<=": "<=",
-			};
-			clauses.push(`${path} ${ops[c.op]} ${bind(val)}`);
+			clauses.push(compareClause(path, c.op, c.value));
 		} else if (e.type === "and") {
 			for (const child of e.exprs) walk(child);
 		} else if (e.type === "or") {

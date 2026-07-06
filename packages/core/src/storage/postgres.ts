@@ -72,6 +72,7 @@ function buildScanSql(
 				return `data->>'${safe}'`;
 			},
 			bind,
+			"postgres",
 		);
 		if (clauses.length > 0) sql += " AND " + clauses.join(" AND ");
 	}
