@@ -1,0 +1,366 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Import" active="import">
+  <h1>Import data</h1>
+  <p class="subtitle">Upload a file, map it to a schema, validate, and import.</p>
+
+  <div class="steps">
+    <div class="step active" data-step="1">1 · Upload</div>
+    <div class="step" data-step="2">2 · Preview</div>
+    <div class="step" data-step="3">3 · Schema</div>
+    <div class="step" data-step="4">4 · Mapping</div>
+    <div class="step" data-step="5">5 · Dry run</div>
+    <div class="step" data-step="6">6 · Import</div>
+  </div>
+
+  <!-- Step 1: Upload -->
+  <section id="step-1">
+    <div class="dropzone" id="dropzone">
+      <p style="font-size: 16px; margin-bottom: 8px;">Drop a CSV or JSON file here</p>
+      <p>or click to choose a file</p>
+      <input type="file" id="file-input" accept=".csv,.json" style="display:none" />
+    </div>
+    <div id="upload-error"></div>
+  </section>
+
+  <!-- Step 2: Preview -->
+  <section id="step-2" class="hidden">
+    <div class="card">
+      <div class="flex">
+        <strong id="file-info"></strong>
+        <span class="badge info" id="format-badge"></span>
+        <span class="badge info" id="rows-badge"></span>
+      </div>
+      <div class="preview-table mt" id="preview-table"></div>
+    </div>
+    <div class="wizard-nav">
+      <button class="btn secondary" data-back="1">Back</button>
+      <button class="btn" data-next="3">Continue</button>
+    </div>
+  </section>
+
+  <!-- Step 3: Schema -->
+  <section id="step-3" class="hidden">
+    <div class="card">
+      <label>
+        <input type="radio" name="schema-mode" value="new" checked style="width:auto; margin-right: 8px;" />
+        Create new schema from the file
+      </label>
+      <div id="new-schema-panel" class="mt">
+        <label for="schema-id">Schema ID</label>
+        <input id="schema-id" class="mono" />
+        <div class="mt" id="suggested-fields"></div>
+      </div>
+
+      <label class="mt">
+        <input type="radio" name="schema-mode" value="existing" style="width:auto; margin-right: 8px;" />
+        Use an existing schema
+      </label>
+      <div id="existing-schema-panel" class="mt hidden">
+        <select id="schema-select"></select>
+      </div>
+    </div>
+    <div class="wizard-nav">
+      <button class="btn secondary" data-back="2">Back</button>
+      <button class="btn" id="schema-continue">Continue</button>
+    </div>
+  </section>
+
+  <!-- Step 4: Mapping -->
+  <section id="step-4" class="hidden">
+    <div class="card">
+      <div class="mapping-row" style="font-weight: 600; color: var(--text-dim);">
+        <div>Schema field</div><div></div><div>Source column</div><div>Transform</div>
+      </div>
+      <div id="mapping-rows"></div>
+    </div>
+    <div class="wizard-nav">
+      <button class="btn secondary" data-back="3">Back</button>
+      <button class="btn" id="dry-run-btn">Validate (dry run)</button>
+    </div>
+  </section>
+
+  <!-- Step 5: Dry run results -->
+  <section id="step-5" class="hidden">
+    <div id="dry-run-result"></div>
+    <div class="wizard-nav">
+      <button class="btn secondary" data-back="4">Adjust mapping</button>
+      <button class="btn success" id="import-btn">Import for real</button>
+    </div>
+  </section>
+
+  <!-- Step 6: Done -->
+  <section id="step-6" class="hidden">
+    <div id="import-result"></div>
+    <div class="wizard-nav">
+      <a class="btn secondary" href="/import">New import</a>
+      <a class="btn" href="/entities">Browse entities</a>
+    </div>
+  </section>
+
+  <script>
+    import { api, getApiUrl, getToken, getDataset } from "../lib/api";
+
+    interface Analysis {
+      uploadId: string;
+      filename: string;
+      format: string;
+      delimiter?: string;
+      columns: string[];
+      rowCount: number;
+      preview: Record<string, unknown>[];
+      inferredTypes: Record<string, string>;
+      suggestedSchema: {
+        id: string;
+        name: string;
+        fields: { name: string; type: string; label?: string }[];
+      };
+      suggestedMapping: Record<string, string>;
+      suggestedTransforms: { field: string; fn: string }[];
+    }
+
+    interface StoredSchema {
+      id: string;
+      name: string;
+      fields: { name: string; type: string; required?: boolean }[];
+    }
+
+    const TRANSFORMS = ["", "toBoolean", "toNumber", "toDate", "toSlug", "trim", "toLowerCase", "toUpperCase"];
+    const ds = getDataset();
+
+    let analysis: Analysis | null = null;
+    let activeSchema: { id: string; fields: { name: string; type: string }[] } | null = null;
+    let isNewSchema = true;
+
+    function goTo(step: number) {
+      for (let i = 1; i <= 6; i++) {
+        document.getElementById(`step-${i}`)!.classList.toggle("hidden", i !== step);
+        const el = document.querySelector(`.step[data-step="${i}"]`)!;
+        el.classList.toggle("active", i === step);
+        el.classList.toggle("done", i < step);
+      }
+    }
+
+    document.querySelectorAll("[data-back]").forEach((b) =>
+      b.addEventListener("click", () => goTo(Number((b as HTMLElement).dataset.back)))
+    );
+    document.querySelectorAll("[data-next]").forEach((b) =>
+      b.addEventListener("click", () => goTo(Number((b as HTMLElement).dataset.next)))
+    );
+
+    // ── Step 1: Upload ────────────────────────────────────────────────────
+    const dropzone = document.getElementById("dropzone")!;
+    const fileInput = document.getElementById("file-input") as HTMLInputElement;
+
+    dropzone.addEventListener("click", () => fileInput.click());
+    dropzone.addEventListener("dragover", (e) => { e.preventDefault(); dropzone.classList.add("drag"); });
+    dropzone.addEventListener("dragleave", () => dropzone.classList.remove("drag"));
+    dropzone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      dropzone.classList.remove("drag");
+      if (e.dataTransfer?.files[0]) uploadFile(e.dataTransfer.files[0]);
+    });
+    fileInput.addEventListener("change", () => {
+      if (fileInput.files?.[0]) uploadFile(fileInput.files[0]);
+    });
+
+    async function uploadFile(file: File) {
+      document.getElementById("upload-error")!.innerHTML = "";
+      try {
+        const form = new FormData();
+        form.append("file", file);
+        const token = getToken();
+        const res = await fetch(`${getApiUrl()}/import/analyze`, {
+          method: "POST",
+          body: form,
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error ?? "Analysis failed");
+        analysis = data as Analysis;
+        renderPreview();
+        renderSchemaStep();
+        goTo(2);
+      } catch (e) {
+        document.getElementById("upload-error")!.innerHTML =
+          `<div class="error-box">${String(e)}</div>`;
+      }
+    }
+
+    // ── Step 2: Preview ───────────────────────────────────────────────────
+    function renderPreview() {
+      if (!analysis) return;
+      document.getElementById("file-info")!.textContent = analysis.filename;
+      document.getElementById("format-badge")!.textContent =
+        analysis.format.toUpperCase() + (analysis.delimiter ? ` · "${analysis.delimiter}"` : "");
+      document.getElementById("rows-badge")!.textContent = `${analysis.rowCount} rows`;
+
+      const cols = analysis.columns;
+      const header = cols.map((c) =>
+        `<th>${c}<br/><span class="muted" style="text-transform:none">${analysis!.inferredTypes[c]}</span></th>`
+      ).join("");
+      const rows = analysis.preview.map((r) =>
+        `<tr>${cols.map((c) => `<td>${String(r[c] ?? "")}</td>`).join("")}</tr>`
+      ).join("");
+      document.getElementById("preview-table")!.innerHTML =
+        `<table><thead><tr>${header}</tr></thead><tbody>${rows}</tbody></table>`;
+    }
+
+    // ── Step 3: Schema ────────────────────────────────────────────────────
+    async function renderSchemaStep() {
+      if (!analysis) return;
+      (document.getElementById("schema-id") as HTMLInputElement).value = analysis.suggestedSchema.id;
+      document.getElementById("suggested-fields")!.innerHTML =
+        `<table><thead><tr><th>Field</th><th>Type</th></tr></thead><tbody>` +
+        analysis.suggestedSchema.fields.map((f) =>
+          `<tr><td class="mono">${f.name}</td><td><span class="badge info">${f.type}</span></td></tr>`
+        ).join("") +
+        `</tbody></table>`;
+
+      try {
+        const schemas = await api<StoredSchema[]>(`/schemas?dataset=${ds}`);
+        const sel = document.getElementById("schema-select") as HTMLSelectElement;
+        sel.innerHTML = schemas.length
+          ? schemas.map((s) => `<option value="${s.id}">${s.name} (${s.id})</option>`).join("")
+          : `<option value="">No schemas in this dataset</option>`;
+      } catch { /* ignore */ }
+    }
+
+    document.querySelectorAll('input[name="schema-mode"]').forEach((r) =>
+      r.addEventListener("change", () => {
+        isNewSchema = (document.querySelector('input[name="schema-mode"]:checked') as HTMLInputElement).value === "new";
+        document.getElementById("new-schema-panel")!.classList.toggle("hidden", !isNewSchema);
+        document.getElementById("existing-schema-panel")!.classList.toggle("hidden", isNewSchema);
+      })
+    );
+
+    document.getElementById("schema-continue")!.addEventListener("click", async () => {
+      if (!analysis) return;
+      try {
+        if (isNewSchema) {
+          const id = (document.getElementById("schema-id") as HTMLInputElement).value.trim();
+          const def = { ...analysis.suggestedSchema, id };
+          const created = await api<StoredSchema>(`/schemas?dataset=${ds}`, {
+            method: "POST",
+            body: JSON.stringify(def),
+          });
+          activeSchema = { id: created.id, fields: created.fields };
+        } else {
+          const sel = document.getElementById("schema-select") as HTMLSelectElement;
+          if (!sel.value) return;
+          const schema = await api<StoredSchema>(`/schemas/${sel.value}?dataset=${ds}`);
+          activeSchema = { id: schema.id, fields: schema.fields };
+        }
+        renderMapping();
+        goTo(4);
+      } catch (e) {
+        alert(String(e));
+      }
+    });
+
+    // ── Step 4: Mapping ───────────────────────────────────────────────────
+    function renderMapping() {
+      if (!analysis || !activeSchema) return;
+      const container = document.getElementById("mapping-rows")!;
+      const transformByField: Record<string, string> = {};
+      for (const t of analysis.suggestedTransforms) transformByField[t.field] = t.fn;
+
+      container.innerHTML = activeSchema.fields.map((f) => {
+        const suggested = analysis!.suggestedMapping[f.name] ?? "";
+        const colOptions = ['<option value="">— skip —</option>']
+          .concat(analysis!.columns.map((c) =>
+            `<option value="${c}" ${c === suggested ? "selected" : ""}>${c}</option>`
+          )).join("");
+        const suggestedFn = transformByField[f.name] ?? "";
+        const fnOptions = TRANSFORMS.map((t) =>
+          `<option value="${t}" ${t === suggestedFn ? "selected" : ""}>${t || "none"}</option>`
+        ).join("");
+        return `<div class="mapping-row">
+          <div class="mono">${f.name} <span class="muted">(${f.type})</span></div>
+          <div class="muted">←</div>
+          <div><select data-map-field="${f.name}">${colOptions}</select></div>
+          <div><select data-transform-field="${f.name}">${fnOptions}</select></div>
+        </div>`;
+      }).join("");
+    }
+
+    function collectMapping(): { mapping: Record<string, string>; transforms: { field: string; fn: string }[] } {
+      const mapping: Record<string, string> = {};
+      const transforms: { field: string; fn: string }[] = [];
+      document.querySelectorAll("[data-map-field]").forEach((el) => {
+        const sel = el as HTMLSelectElement;
+        if (sel.value) mapping[sel.dataset.mapField!] = sel.value;
+      });
+      document.querySelectorAll("[data-transform-field]").forEach((el) => {
+        const sel = el as HTMLSelectElement;
+        if (sel.value) transforms.push({ field: sel.dataset.transformField!, fn: sel.value });
+      });
+      return { mapping, transforms };
+    }
+
+    // ── Step 5: Dry run ───────────────────────────────────────────────────
+    async function runImport(dryRun: boolean) {
+      if (!analysis || !activeSchema) throw new Error("Wizard state lost");
+      const { mapping, transforms } = collectMapping();
+      return api<{
+        total: number; imported: number; failed: number;
+        errors: { row: number; message: string }[];
+        sample?: Record<string, unknown>[];
+      }>(`/import/run`, {
+        method: "POST",
+        body: JSON.stringify({
+          uploadId: analysis.uploadId,
+          filename: analysis.filename,
+          schemaId: activeSchema.id,
+          datasetId: ds,
+          delimiter: analysis.delimiter,
+          mapping,
+          transforms,
+          dryRun,
+        }),
+      });
+    }
+
+    document.getElementById("dry-run-btn")!.addEventListener("click", async () => {
+      try {
+        const result = await runImport(true);
+        const panel = document.getElementById("dry-run-result")!;
+        let html = "";
+        if (result.failed === 0) {
+          html += `<div class="success-box">All ${result.total} rows validate. Nothing has been written yet.</div>`;
+        } else {
+          html += `<div class="error-box">${result.failed} of ${result.total} rows failed validation.</div>`;
+          html += `<div class="card mt"><table><thead><tr><th>Row</th><th>Error</th></tr></thead><tbody>` +
+            result.errors.slice(0, 20).map((e) =>
+              `<tr><td>${e.row}</td><td class="mono">${e.message}</td></tr>`
+            ).join("") + `</tbody></table></div>`;
+        }
+        if (result.sample?.length) {
+          html += `<h2>Sample of what will be written</h2><pre class="json">${JSON.stringify(result.sample.slice(0, 5), null, 2)}</pre>`;
+        }
+        panel.innerHTML = html;
+        (document.getElementById("import-btn") as HTMLButtonElement).disabled = result.imported === 0;
+        goTo(5);
+      } catch (e) {
+        alert(String(e));
+      }
+    });
+
+    // ── Step 6: Import ────────────────────────────────────────────────────
+    document.getElementById("import-btn")!.addEventListener("click", async () => {
+      try {
+        const result = await runImport(false);
+        const panel = document.getElementById("import-result")!;
+        panel.innerHTML = result.failed === 0
+          ? `<div class="success-box" style="font-size: 16px;">Imported ${result.imported} entities.</div>`
+          : `<div class="success-box">Imported ${result.imported} of ${result.total}.</div>
+             <div class="error-box">${result.failed} rows failed.</div>`;
+        goTo(6);
+      } catch (e) {
+        alert(String(e));
+      }
+    });
+  </script>
+</Layout>

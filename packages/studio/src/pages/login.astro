@@ -1,0 +1,58 @@
+---
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign in — Aurii Studio</title>
+    <style is:global>
+      @import "../styles/global.css";
+    </style>
+  </head>
+  <body>
+    <div class="login-wrap">
+      <div class="login-card">
+        <h1>au<span style="color: var(--accent)">rii</span></h1>
+        <div class="field">
+          <label for="api-url">API URL</label>
+          <input id="api-url" value="http://localhost:3000" class="mono" />
+        </div>
+        <div class="field">
+          <label for="token">API token</label>
+          <input id="token" type="password" placeholder="Leave empty if API is open" class="mono" />
+        </div>
+        <div id="login-error"></div>
+        <button class="btn" id="connect" style="width: 100%;">Connect</button>
+      </div>
+    </div>
+
+    <script>
+      import { setConnection } from "../lib/api";
+
+      document.getElementById("connect")!.addEventListener("click", async () => {
+        const apiUrl = (document.getElementById("api-url") as HTMLInputElement).value.trim().replace(/\/$/, "");
+        const token = (document.getElementById("token") as HTMLInputElement).value.trim() || null;
+        const errBox = document.getElementById("login-error")!;
+        errBox.innerHTML = "";
+
+        try {
+          const health = await fetch(`${apiUrl}/health`);
+          if (!health.ok) throw new Error("API unreachable");
+
+          // Verify the token actually works against a protected route
+          const check = await fetch(`${apiUrl}/datasets`, {
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
+          });
+          if (check.status === 401) throw new Error("Invalid token");
+
+          setConnection(apiUrl, token);
+          window.location.href = "/";
+        } catch (e) {
+          errBox.innerHTML = `<div class="error-box">${String(e)}</div>`;
+        }
+      });
+    </script>
+  </body>
+</html>

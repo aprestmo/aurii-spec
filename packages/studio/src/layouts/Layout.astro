@@ -1,0 +1,69 @@
+---
+interface Props {
+  title: string;
+  active: string;
+}
+const { title, active } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title} — Aurii Studio</title>
+    <style is:global>
+      @import "../styles/global.css";
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <nav class="sidebar">
+        <div class="logo">au<span>rii</span> studio</div>
+        <a href="/" class={active === "dashboard" ? "active" : ""}>Dashboard</a>
+        <a href="/import" class={active === "import" ? "active" : ""}>Import</a>
+        <a href="/entities" class={active === "entities" ? "active" : ""}>Entities</a>
+        <a href="/schemas" class={active === "schemas" ? "active" : ""}>Schemas</a>
+        <div class="spacer"></div>
+        <div style="padding: 0 12px 12px;">
+          <label for="dataset-switcher" class="muted" style="font-size: 11px;">DATASET</label>
+          <select id="dataset-switcher"></select>
+        </div>
+        <div class="conn" id="conn-status">
+          <span class="dot err"></span>connecting…
+        </div>
+      </nav>
+      <main class="main">
+        <slot />
+      </main>
+    </div>
+
+    <script>
+      import { api, checkHealth, getDataset, setDataset } from "../lib/api";
+
+      const health = await checkHealth();
+      const conn = document.getElementById("conn-status")!;
+      if (health) {
+        conn.innerHTML = `<span class="dot ok"></span>${health.storage} · connected`;
+      } else {
+        conn.innerHTML = `<span class="dot err"></span>API unreachable`;
+      }
+
+      // Dataset switcher
+      try {
+        const datasets = await api<{ id: string; name: string }[]>("/datasets");
+        const sel = document.getElementById("dataset-switcher") as HTMLSelectElement;
+        const current = getDataset();
+        sel.innerHTML = datasets
+          .map((d) => `<option value="${d.id}" ${d.id === current ? "selected" : ""}>${d.name}</option>`)
+          .join("");
+        sel.addEventListener("change", () => {
+          setDataset(sel.value);
+          window.location.reload();
+        });
+      } catch {
+        /* login redirect handled by api() */
+      }
+    </script>
+  </body>
+</html>

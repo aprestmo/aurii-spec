@@ -1,0 +1,126 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Dashboard" active="dashboard">
+  <h1>Dashboard</h1>
+  <p class="subtitle" id="ds-label">Overview of your data</p>
+
+  <div class="grid cols-4" id="stat-cards">
+    <div class="card"><div class="stat" id="total-entities">–</div><div class="label">Entities</div></div>
+    <div class="card"><div class="stat" id="total-schemas">–</div><div class="label">Schemas</div></div>
+    <div class="card"><div class="stat" id="total-imports">–</div><div class="label">Import runs</div></div>
+    <div class="card"><div class="stat" id="failed-imports">–</div><div class="label">Failed imports</div></div>
+  </div>
+
+  <h2>Schemas &amp; field coverage</h2>
+  <div class="card" id="coverage-panel">
+    <p class="muted">Loading…</p>
+  </div>
+
+  <h2>Recent imports</h2>
+  <div class="card" id="imports-panel">
+    <p class="muted">Loading…</p>
+  </div>
+
+  <script>
+    import { api, getDataset } from "../lib/api";
+
+    interface Stats {
+      datasetId: string;
+      totalEntities: number;
+      schemas: {
+        schemaId: string;
+        name: string;
+        count: number;
+        fieldCoverage: { field: string; pct: number }[];
+      }[];
+    }
+
+    interface ImportRun {
+      id: string;
+      status: string;
+      dryRun: boolean;
+      total: number;
+      imported: number;
+      failed: number;
+      schemaId: string | null;
+      createdAt: string;
+    }
+
+    const ds = getDataset();
+    document.getElementById("ds-label")!.textContent = `Dataset: ${ds}`;
+
+    try {
+      const [stats, imports] = await Promise.all([
+        api<Stats>(`/stats?dataset=${ds}`),
+        api<ImportRun[]>(`/imports?dataset=${ds}`),
+      ]);
+
+      document.getElementById("total-entities")!.textContent = String(stats.totalEntities);
+      document.getElementById("total-schemas")!.textContent = String(stats.schemas.length);
+      document.getElementById("total-imports")!.textContent = String(imports.length);
+      document.getElementById("failed-imports")!.textContent = String(
+        imports.filter((i) => i.status === "failed" || i.status === "partial").length
+      );
+
+      // Coverage panel
+      const coveragePanel = document.getElementById("coverage-panel")!;
+      if (stats.schemas.length === 0) {
+        coveragePanel.innerHTML = `<p class="muted">No schemas yet. <a href="/import" style="color: var(--accent)">Import some data</a> to get started.</p>`;
+      } else {
+        coveragePanel.innerHTML = stats.schemas
+          .map((s) => {
+            const rows = s.fieldCoverage
+              .map((f) => {
+                const cls = f.pct < 50 ? "critical" : f.pct < 80 ? "low" : "";
+                return `<tr>
+                  <td class="mono">${f.field}</td>
+                  <td><span class="coverage-bar"><div class="${cls}" style="width:${f.pct}%"></div></span></td>
+                  <td class="muted">${f.pct}%</td>
+                </tr>`;
+              })
+              .join("");
+            return `
+              <div style="margin-bottom: 20px;">
+                <div class="flex" style="margin-bottom: 8px;">
+                  <strong>${s.name}</strong>
+                  <span class="badge info">${s.count} entities</span>
+                </div>
+                <table><tbody>${rows}</tbody></table>
+              </div>`;
+          })
+          .join("");
+      }
+
+      // Imports panel
+      const importsPanel = document.getElementById("imports-panel")!;
+      if (imports.length === 0) {
+        importsPanel.innerHTML = `<p class="muted">No imports yet.</p>`;
+      } else {
+        const rows = imports
+          .slice(0, 10)
+          .map((i) => {
+            const badge =
+              i.status === "completed" ? "ok" : i.status === "partial" ? "warn" : "err";
+            return `<tr>
+              <td>${new Date(i.createdAt).toLocaleString()}</td>
+              <td class="mono">${i.schemaId ?? "—"}</td>
+              <td><span class="badge ${badge}">${i.status}${i.dryRun ? " (dry)" : ""}</span></td>
+              <td>${i.imported} / ${i.total}</td>
+              <td>${i.failed > 0 ? `<span style="color:var(--red)">${i.failed} failed</span>` : "—"}</td>
+            </tr>`;
+          })
+          .join("");
+        importsPanel.innerHTML = `
+          <table>
+            <thead><tr><th>Time</th><th>Schema</th><th>Status</th><th>Imported</th><th>Errors</th></tr></thead>
+            <tbody>${rows}</tbody>
+          </table>`;
+      }
+    } catch (e) {
+      document.getElementById("coverage-panel")!.innerHTML =
+        `<p class="error-box">${String(e)}</p>`;
+    }
+  </script>
+</Layout>
