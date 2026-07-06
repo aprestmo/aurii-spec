@@ -202,7 +202,9 @@ export function evaluateCondition(
 		case "<=":
 			return (fieldValue as number) <= (value as number);
 		case "contains":
-			return String(fieldValue ?? "").includes(String(value ?? ""));
+			return String(fieldValue ?? "")
+				.toLowerCase()
+				.includes(String(value ?? "").toLowerCase());
 		default:
 			return false;
 	}
