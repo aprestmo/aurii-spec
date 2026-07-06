@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 /**
- * Import the Norwegian geographic reference dataset into Aurii Core.
+ * Import the Norwegian public reference dataset into Aurii Core.
  *
  * Usage (from repo root):
  *   bun run import:norwegian-geo
@@ -20,6 +20,26 @@ import { closeStorage, getStorage } from "../src/storage";
 const ROOT = resolve(import.meta.dir, "../../..");
 const DEMO = resolve(ROOT, "demo/norwegian-geo");
 const DATASET = "norwegian-geo";
+
+const SCHEMAS = [
+	"county",
+	"municipality",
+	"postal-code",
+	"school",
+	"kindergarten",
+	"hospital",
+	"public-holiday",
+] as const;
+
+const IMPORTS = [
+	"counties",
+	"municipalities",
+	"postal-codes",
+	"schools",
+	"kindergartens",
+	"hospitals",
+	"public-holidays",
+] as const;
 
 async function applySchema(file: string): Promise<void> {
 	const content = await Bun.file(file).text();
@@ -42,7 +62,7 @@ async function runImportFile(file: string): Promise<void> {
 	}
 }
 
-console.log("\nAurii — Norwegian Geographic Data Import\n");
+console.log("\nAurii — Norwegian Public Reference Data Import\n");
 
 const storage = await getStorage();
 await storage.init();
@@ -50,7 +70,7 @@ await storage.init();
 try {
 	await storage.createDataset({
 		id: DATASET,
-		name: "Norwegian Geography",
+		name: "Norwegian Public Reference Data",
 	});
 	console.log(`Dataset "${DATASET}" ready\n`);
 } catch {
@@ -58,23 +78,21 @@ try {
 }
 
 console.log("Registering schemas...");
-for (const schema of ["county", "municipality", "postal-code"]) {
+for (const schema of SCHEMAS) {
 	await applySchema(resolve(DEMO, "schemas", `${schema}.yaml`));
 }
 
 console.log("\nRunning imports...");
-for (const imp of ["counties", "municipalities", "postal-codes"]) {
+for (const imp of IMPORTS) {
 	await runImportFile(resolve(DEMO, "imports", `${imp}.yaml`));
 }
 
-const countyCount = await storage.countEntities("county", DATASET);
-const municipalityCount = await storage.countEntities("municipality", DATASET);
-const postalCount = await storage.countEntities("postal-code", DATASET);
-
 console.log("\n── Summary ──────────────────────────────");
-console.log(`  Counties:       ${countyCount}`);
-console.log(`  Municipalities: ${municipalityCount}`);
-console.log(`  Postal codes:   ${postalCount}`);
+for (const schema of SCHEMAS) {
+	const count = await storage.countEntities(schema, DATASET);
+	const label = schema.padEnd(16);
+	console.log(`  ${label} ${count}`);
+}
 console.log("────────────────────────────────────────\n");
 
 await closeStorage();

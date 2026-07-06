@@ -6,18 +6,20 @@
 
 ## Overview
 
-The Norwegian geographic reference dataset proves the full Aurii loop against **real open data**:
+The Norwegian public reference dataset proves the full Aurii loop against **real open data** from multiple independent sources:
 
 ```
-Kartverket + Bring  →  import  →  PostgreSQL  →  query  →  API  →  SDK  →  Studio / apps/geo
+Kartverket + Bring + UDIR + Brreg  →  import  →  storage  →  query  →  API  →  SDK  →  Studio / apps/geo
 ```
 
 | Component | Path |
 |-----------|------|
 | Dataset (schemas, imports, snapshots) | `demo/norwegian-geo/` |
+| Dataset survey & strategy | `docs/Public Reference Datasets.md` |
 | Import script | `bun run import:norwegian-geo` |
 | Refresh from live APIs | `bun run fetch:norwegian-geo` |
 | Core integration tests | `packages/core/src/__tests__/vertical-slice.test.ts` |
+| Public reference datasets test | `packages/core/src/__tests__/public-reference-datasets.test.ts` |
 | Route feasibility tests | `packages/core/src/__tests__/geo-website-routes.test.ts` |
 | Live API import test | `packages/core/src/__tests__/norwegian-geo-import.test.ts` |
 | SDK vertical slice | `packages/sdk/src/__tests__/vertical-slice.test.ts` |
@@ -33,12 +35,19 @@ Kartverket + Bring  →  import  →  PostgreSQL  →  query  →  API  →  SDK
 | `county` | 15 | `id` | — |
 | `municipality` | 357 | `id` | `countyId` → `county` (reference) |
 | `postal-code` | 5,122 | `code` | `municipalityId` → `municipality` (reference) |
+| `school` | ~5,683 | `id` | `municipalityId`, `countyId` → geography |
+| `kindergarten` | ~5,541 | `id` | `municipalityId`, `countyId` → geography |
+| `hospital` | ~115 | `id` | `municipalityId` → `municipality` |
+| `public-holiday` | 84 | `id` | — (national calendar) |
 
 Dataset ID: **`norwegian-geo`**
 
 Sources:
 - Counties & municipalities: [Kartverket/GeoNorge](https://ws.geonorge.no/kommuneinfo/v1/)
 - Postal codes: [Bring](https://www.bring.no/tjenester/adressetjenester/postnummer)
+- Schools & kindergartens: [UDIR NSR/NBR](https://www.udir.no/om-udir/data/nxr/)
+- Hospitals: [Brønnøysundregistrene](https://data.brreg.no/enhetsregisteret/api)
+- Public holidays: [Nager.Date](https://date.nager.at) (see `docs/Public Reference Datasets.md`)
 
 ---
 
