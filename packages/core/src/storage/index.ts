@@ -1,3 +1,4 @@
+import { registerCapability } from "../capabilities/registry";
 import { PostgresAdapter } from "./postgres";
 import { SqliteAdapter } from "./sqlite";
 import type { StorageAdapter } from "./types";
@@ -18,6 +19,15 @@ export async function getStorage(): Promise<StorageAdapter> {
 	if (!_initialized) {
 		await _storage.init();
 		_initialized = true;
+		registerCapability(
+			{
+				id: "storage",
+				name: "Storage Engine",
+				kind: "Storage",
+				variant: _storage.kind,
+			},
+			"available",
+		);
 	}
 	return _storage;
 }

@@ -1,0 +1,54 @@
+id: company
+name: Company
+description: A company or organisation in the business directory
+fields:
+  - name: registrationNumber
+    type: string
+    required: true
+    description: Official company registration number
+
+  - name: name
+    type: string
+    required: true
+    description: Legal company name
+
+  - name: slug
+    type: string
+    description: URL-safe identifier
+
+  - name: industry
+    type: string
+    description: Primary industry sector
+
+  - name: founded
+    type: number
+    description: Year the company was founded
+
+  - name: employees
+    type: number
+    description: Number of employees (approximate)
+
+  - name: revenue
+    type: number
+    description: Annual revenue in USD (approximate, millions)
+
+  - name: country
+    type: string
+    description: Country of incorporation (ISO 3166-1 alpha-2)
+
+  - name: city
+    type: string
+    description: City of headquarters
+
+  - name: website
+    type: string
+    description: Company website URL
+
+  - name: description
+    type: string
+    description: Short company description
+
+  - name: listed
+    type: boolean
+    default: false
+    description: Whether the company is publicly listed

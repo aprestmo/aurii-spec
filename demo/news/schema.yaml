@@ -1,0 +1,46 @@
+id: news-article
+name: News Article
+description: A published news article with author, category and publication details
+fields:
+  - name: headline
+    type: string
+    required: true
+    description: Article headline
+
+  - name: slug
+    type: string
+    required: true
+    description: URL-safe identifier
+
+  - name: summary
+    type: string
+    description: Short article summary (lead paragraph)
+
+  - name: body
+    type: string
+    description: Full article body
+
+  - name: author
+    type: string
+    description: Author display name
+
+  - name: category
+    type: string
+    description: News category (e.g. Politics, Technology, Sports)
+
+  - name: tags
+    type: string
+    description: Comma-separated topic tags
+
+  - name: published
+    type: boolean
+    default: false
+    description: Whether the article is publicly visible
+
+  - name: publishedAt
+    type: date
+    description: Publication date and time (ISO 8601)
+
+  - name: source
+    type: string
+    description: Original source URL or publication name

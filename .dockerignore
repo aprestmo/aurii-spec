@@ -1,0 +1,9 @@
+node_modules
+.git
+*.md
+adr/
+docs/
+.astro/
+dist/
+.aurii-uploads/
+*.test.ts

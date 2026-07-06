@@ -405,71 +405,92 @@ Aurii should become the foundation upon which entirely new classes of applicatio
 
 ## Status
 
-**Current state: working prototype — Phase 2 merged, Phase 3 not started.**
+**Current state: Phase 2.1 complete — production hardening pass applied.**
 
-This is not a product. It is an early prototype that validates the import-first loop.
+### Repository layout
+
+```
+apps/
+  studio/          @aurii/studio — Astro admin client
+packages/
+  core/            @aurii/core   — Runtime (Bun + Elysia)
+  sdk/             @aurii/sdk    — Typed HTTP client (browser + server)
+demo/              Ready-to-import example datasets
+docs/              Architecture specifications and design documents
+adr/               Architecture Decision Records
+```
 
 ### What exists and is verified
 
 | Component | Status |
 |-----------|--------|
 | `packages/core` — CLI, HTTP API, schema, import, query, pipeline | Running |
+| `packages/sdk` — Typed HTTP client wrapping all API endpoints | Built, tested |
 | SQLite storage adapter | Verified end-to-end |
-| PostgreSQL storage adapter | **CI-verified** — same adapter contract runs against a real `postgres:16` service container on every push ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) |
-| Query Language v0 (parser + executor) | 23 unit tests passing |
-| Import pipeline (CSV/JSON, mapping, transforms, validation) | 7 e2e tests passing |
-| HTTP API (Elysia routes: auth, datasets, schemas, entities, query, import, stats) | 28 integration tests passing (`app.handle()`, no real socket) |
-| Studio (Astro) — dashboard, import wizard, entity browser | Builds, talks to Core over HTTP |
+| PostgreSQL storage adapter | **CI-verified** — runs against `postgres:16` on every push |
+| Query Language v0 (parser + executor) | Unit tests passing |
+| Import pipeline (CSV/JSON, mapping, transforms, validation) | E2E tests passing |
+| HTTP API (datasets, schemas, entities, query, import, stats) | Integration tests passing |
+| OpenAPI / Swagger UI | Available at `/swagger` when Core is running |
+| Capability Registry | Self-registering internal subsystem declarations |
+| Internal domain events | `dataset.created`, `entity.*`, `import.*` |
+| Studio (Astro) — dashboard, import wizard, entity browser | Builds, uses SDK |
+| Studio automated tests | SDK integration tests against in-process Core |
+| Docker developer environment | `docker compose up` starts Core + Studio + PostgreSQL |
+| Demo datasets | news, products, municipalities, companies in `demo/` |
 
 ### Continuous Integration
 
-Every push and pull request runs three jobs (see [`.github/workflows/ci.yml`](.github/workflows/ci.yml)):
+Every push and pull request runs four jobs:
 
-- **core** — typecheck, lint, and the full `packages/core` test suite against in-memory SQLite
-- **core-postgres** — the same test suite run a second time against a real PostgreSQL/JSONB service container, so the PostgreSQL adapter is no longer "code exists, unverified" — its JSON querying, numeric/boolean casting, ordering and transaction behaviour are checked on every change
-- **studio** — builds the Astro Studio to catch build regressions
+- **core** — typecheck, lint, and full test suite (SQLite)
+- **core-postgres** — same test suite against a real PostgreSQL/JSONB service container
+- **sdk** — typecheck and SDK tests
+- **studio** — build check + API integration tests
 
-The PostgreSQL adapter tests are opt-in locally: they only run when a reachable `DATABASE_URL` is set (`describe.skipIf` in `src/__tests__/postgres-adapter.test.ts`), so `bun run test` still works without Docker/Postgres installed.
+### Quick start (one command)
 
-### What is not built yet
+```bash
+docker compose up
+```
 
-- Real permission system (only a single bearer token today)
-- Relation support in queries
-- Plugin system
-- AI integration
-- Phase 3 features
+This starts:
+- Core API at **http://localhost:3000** (Swagger UI at /swagger)
+- Studio at **http://localhost:4321**
+- PostgreSQL on port 5432
 
-### Known limitations to keep an eye on
+### Running locally without Docker
 
-- **`skipLibCheck: true`** is set in `packages/core/tsconfig.json` to work around an
-  Elysia 1.4.x / TypeScript 6.0 type-declaration incompatibility. This only skips
-  checking `.d.ts` files in dependencies — our own source is still fully checked
-  (`bun run typecheck`, 0 errors) — but it should be revisited and removed once
-  upstream compatibility improves.
-- Studio has no automated test suite yet, only a CI build check. Its test coverage
-  is well behind Core's.
+**Install dependencies:**
 
-### Running locally
+```bash
+bun install   # installs all workspace packages
+```
 
 **Core (HTTP API):**
 
 ```bash
 cd packages/core
-bun install
 bun run serve          # starts on http://localhost:3000
 ```
 
 **Studio:**
 
 ```bash
-cd packages/studio
-bun install
+cd apps/studio
 bun run dev            # starts on http://localhost:4321
 ```
 
-Set `AURII_API_URL=http://localhost:3000` in Studio's environment so it points to Core.
+**Root workspace scripts:**
 
-**Environment variables for Core:**
+```bash
+bun run build      # typecheck all packages
+bun run test       # run all test suites
+bun run lint       # lint all packages
+bun run typecheck  # TypeScript check all packages
+```
+
+### Environment variables for Core
 
 | Variable | Default | Description |
 |----------|---------|-------------|
@@ -482,25 +503,60 @@ Set `AURII_API_URL=http://localhost:3000` in Studio's environment so it points t
 ### Running tests
 
 ```bash
-cd packages/core
-bun run test        # 164 unit, e2e and HTTP integration tests (SQLite)
-bun run typecheck   # TypeScript check (0 errors)
-bun run lint        # Biome lint
+# Core (all tests, SQLite)
+cd packages/core && bun run test
+
+# Core with PostgreSQL adapter
+DATABASE_URL=postgres://user:pass@localhost:5432/aurii_test bun run test
+
+# SDK
+cd packages/sdk && bun run test
+
+# Studio
+cd apps/studio && bun run test
 ```
 
-To also run the PostgreSQL adapter suite locally (27 tests), point `DATABASE_URL`
-at a real database — the tests are skipped automatically otherwise:
+### Using the SDK
+
+```ts
+import { createClient } from "@aurii/sdk";
+
+const client = createClient({
+  baseUrl: "http://localhost:3000",
+  token: process.env.AURII_API_TOKEN,
+  defaultDataset: "my-dataset",
+});
+
+const datasets = await client.datasets.list();
+const schemas  = await client.schemas.list();
+const result   = await client.query.run("FROM article LIMIT 10");
+```
+
+### Demo datasets
+
+Load ready-made example data:
 
 ```bash
-DATABASE_URL=postgres://user:pass@localhost:5432/aurii_test bun run test
+cd packages/core
+bun run cli schema register ../demo/news/schema.yaml
+bun run cli import run ../demo/news/import.yaml
 ```
+
+See `demo/README.md` for the full list and usage instructions.
+
+### What is not built yet
+
+- Real permission system (only a single bearer token today)
+- Relation support in queries
+- Plugin system
+- AI integration
+- Phase 3 features (pgvector, semantic search, scheduled imports, RBAC)
 
 ### Specification
 
-The full design documents are in the root of this repository:
+Architecture design documents live in `docs/`:
 
-- `Phase1.md`, `Phase2.md` — implementation phases
-- `Architecture.md`, `API.md`, `Schema Language.md`, `Query Language.md`
+- `docs/Architecture.md`, `docs/API.md`, `docs/Core.md`
+- `docs/Schema Language.md`, `docs/Query Language.md`, `docs/Pipeline Language.md`
 - `adr/` — Architecture Decision Records
-
-The specification is the source of truth. Code implements the specification.
+- `Phase1.md`, `Phase2.md` — implementation phase records

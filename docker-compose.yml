@@ -1,0 +1,69 @@
+name: aurii
+
+# One-command local developer environment.
+#
+# Usage:
+#   docker compose up
+#
+# Services:
+#   - postgres  PostgreSQL 16 database
+#   - core      Aurii Runtime HTTP API (port 3000)
+#   - studio    Aurii Studio admin client (port 4321)
+#
+# The Core API is available at http://localhost:3000
+# Swagger UI is available at http://localhost:3000/swagger
+# Studio is available at http://localhost:4321
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: aurii
+      POSTGRES_PASSWORD: aurii
+      POSTGRES_DB: aurii
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aurii -d aurii"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  core:
+    build:
+      context: .
+      dockerfile: Dockerfile.core
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      AURII_STORAGE: postgres
+      DATABASE_URL: postgres://aurii:aurii@postgres:5432/aurii
+      PORT: "3000"
+      # Optional: uncomment to require an API token
+      # AURII_API_TOKEN: your-secret-token
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  studio:
+    build:
+      context: .
+      dockerfile: Dockerfile.studio
+    restart: unless-stopped
+    ports:
+      - "4321:4321"
+    depends_on:
+      core:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

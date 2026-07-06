@@ -2,9 +2,10 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "types": ["bun"],
+    "lib": ["ESNext", "DOM"],
     "paths": {
-      "@aurii/core": ["./src/index.ts"]
+      "@aurii/sdk": ["./src/index.ts"]
     }
   },
-  "include": ["src/**/*", "examples/**/*"]
+  "include": ["src/**/*"]
 }

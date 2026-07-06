@@ -68,3 +68,33 @@ export {
 	PostgresAdapter,
 	SqliteAdapter,
 } from "./storage";
+// Capabilities
+export {
+	clearCapabilities,
+	getCapability,
+	hasCapability,
+	listCapabilities,
+	listCapabilitiesByKind,
+	registerCapability,
+	updateCapabilityStatus,
+} from "./capabilities";
+export type {
+	Capability,
+	CapabilityKind,
+	CapabilityRegistration,
+	CapabilityStatus,
+} from "./capabilities";
+// Events
+export { clearHandlers, emit, on, onAny } from "./events";
+export type {
+	BaseEvent,
+	DatasetCreatedEvent,
+	DomainEvent,
+	DomainEventType,
+	EntityCreatedEvent,
+	EntityDeletedEvent,
+	EntityUpdatedEvent,
+	EventHandler,
+	ImportFinishedEvent,
+	ImportStartedEvent,
+} from "./events";

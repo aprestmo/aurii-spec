@@ -11,21 +11,15 @@ import Layout from "../layouts/Layout.astro";
   </div>
 
   <script>
-    import { api, getDataset } from "../lib/api";
-
-    interface StoredSchema {
-      id: string;
-      name: string;
-      description?: string;
-      version: number;
-      fields: { name: string; type: string; required?: boolean }[];
-    }
+    import { getClient } from "../lib/client";
+    import { getDataset } from "../lib/api";
 
     const ds = getDataset();
     const list = document.getElementById("schema-list")!;
 
     try {
-      const schemas = await api<StoredSchema[]>(`/schemas?dataset=${ds}`);
+      const client = getClient();
+      const schemas = await client.schemas.list(ds);
       if (schemas.length === 0) {
         list.innerHTML = `<p class="muted">No schemas yet. Import data to create one.</p>`;
       } else {

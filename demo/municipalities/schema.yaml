@@ -1,0 +1,45 @@
+id: municipality
+name: Municipality
+description: A municipality with population, area and geographic information
+fields:
+  - name: code
+    type: string
+    required: true
+    description: Official municipality code
+
+  - name: name
+    type: string
+    required: true
+    description: Official municipality name
+
+  - name: county
+    type: string
+    description: Parent county or region name
+
+  - name: countryCode
+    type: string
+    description: ISO 3166-1 alpha-2 country code
+
+  - name: population
+    type: number
+    description: Resident population (latest census)
+
+  - name: areaKm2
+    type: number
+    description: Total area in square kilometres
+
+  - name: populationDensity
+    type: number
+    description: Population per square kilometre
+
+  - name: latitude
+    type: number
+    description: Approximate geographic centre latitude (decimal degrees)
+
+  - name: longitude
+    type: number
+    description: Approximate geographic centre longitude (decimal degrees)
+
+  - name: type
+    type: string
+    description: Municipality type (urban, rural, suburban)

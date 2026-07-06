@@ -24,16 +24,12 @@ import Layout from "../layouts/Layout.astro";
   </div>
 
   <script>
-    import { api, getDataset } from "../lib/api";
-
-    interface Entity {
-      id: string;
-      schemaId: string;
-      data: Record<string, unknown>;
-      createdAt: string;
-    }
+    import { getClient } from "../lib/client";
+    import { getDataset } from "../lib/api";
+    import type { Entity } from "@aurii/sdk";
 
     const ds = getDataset();
+    const client = getClient();
     const PAGE = 25;
     let offset = 0;
     let total = 0;
@@ -43,7 +39,7 @@ import Layout from "../layouts/Layout.astro";
     const queryInput = document.getElementById("query-input") as HTMLInputElement;
     const results = document.getElementById("results")!;
 
-    const schemas = await api<{ id: string; name: string }[]>(`/schemas?dataset=${ds}`);
+    const schemas = await client.schemas.list(ds);
     schemaFilter.innerHTML =
       '<option value="">Choose schema…</option>' +
       schemas.map((s) => `<option value="${s.id}">${s.name}</option>`).join("");
@@ -66,9 +62,7 @@ import Layout from "../layouts/Layout.astro";
     });
 
     async function load() {
-      const res = await api<{ entities: Entity[]; total: number }>(
-        `/entities?schema=${currentSchema}&dataset=${ds}&limit=${PAGE}&offset=${offset}`
-      );
+      const res = await client.entities.list(currentSchema, { dataset: ds, limit: PAGE, offset });
       total = res.total;
       render(res.entities);
       const pag = document.getElementById("pagination")!;
@@ -83,9 +77,7 @@ import Layout from "../layouts/Layout.astro";
         ? `from ${currentSchema} ${queryInput.value.trim()}`
         : `from ${currentSchema}`;
       try {
-        const res = await api<{ entities: Entity[]; count: number }>(
-          `/query?dataset=${ds}&q=${encodeURIComponent(q)}`
-        );
+        const res = await client.query.run(q, ds);
         document.getElementById("pagination")!.classList.add("hidden");
         render(res.entities);
       } catch (e) {

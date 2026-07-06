@@ -1,0 +1,43 @@
+id: demo-products-import
+name: Demo — Import Products
+description: Imports the demo product catalogue CSV into the product schema
+schema: product
+dataset: demo-products
+source:
+  type: csv
+  path: ./products.csv
+pipeline:
+  steps:
+    - type: map
+      mapping:
+        sku: SKU
+        name: Name
+        slug: Slug
+        description: Description
+        category: Category
+        brand: Brand
+        price: Price
+        compareAtPrice: CompareAtPrice
+        currency: Currency
+        inStock: InStock
+        stockQuantity: StockQuantity
+        weight: Weight
+        tags: Tags
+
+    - type: transform
+      transforms:
+        - field: price
+          fn: toNumber
+        - field: compareAtPrice
+          fn: toNumber
+        - field: inStock
+          fn: toBoolean
+        - field: stockQuantity
+          fn: toNumber
+        - field: weight
+          fn: toNumber
+        - field: slug
+          fn: toSlug
+
+    - type: validate
+    - type: persist

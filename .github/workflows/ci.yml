@@ -6,6 +6,7 @@ on:
   pull_request:
 
 jobs:
+  # ── Core ──────────────────────────────────────────────────────────────────────
   core:
     name: core — typecheck, lint, test (SQLite)
     runs-on: ubuntu-latest
@@ -27,6 +28,7 @@ jobs:
         working-directory: packages/core
         run: bun run test
 
+  # ── Core (PostgreSQL) ─────────────────────────────────────────────────────────
   core-postgres:
     name: core — test (PostgreSQL adapter)
     runs-on: ubuntu-latest
@@ -58,17 +60,46 @@ jobs:
         working-directory: packages/core
         run: bun run test
 
-  studio:
-    name: studio — build
+  # ── SDK ───────────────────────────────────────────────────────────────────────
+  sdk:
+    name: sdk — typecheck, test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-      - name: Install dependencies
-        working-directory: packages/studio
+      - name: Install Core dependencies (SDK tests import Core directly)
+        working-directory: packages/core
+        run: bun install --frozen-lockfile
+      - name: Install SDK dependencies
+        working-directory: packages/sdk
+        run: bun install --frozen-lockfile
+      - name: Typecheck
+        working-directory: packages/sdk
+        run: bun run typecheck
+      - name: Test
+        working-directory: packages/sdk
+        run: bun run test
+
+  # ── Studio ────────────────────────────────────────────────────────────────────
+  studio:
+    name: studio — build, test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Install Core dependencies (Studio tests import Core directly)
+        working-directory: packages/core
+        run: bun install --frozen-lockfile
+      - name: Install Studio dependencies
+        working-directory: apps/studio
         run: bun install --frozen-lockfile
       - name: Build
-        working-directory: packages/studio
+        working-directory: apps/studio
         run: bun run build
+      - name: Test
+        working-directory: apps/studio
+        run: bun run test

@@ -1,0 +1,39 @@
+id: demo-municipalities-import
+name: Demo — Import Municipalities
+description: Imports the demo municipality data CSV into the municipality schema
+schema: municipality
+dataset: demo-geo
+deduplicateBy: code
+source:
+  type: csv
+  path: ./municipalities.csv
+pipeline:
+  steps:
+    - type: map
+      mapping:
+        code: Code
+        name: Name
+        county: County
+        countryCode: CountryCode
+        population: Population
+        areaKm2: AreaKm2
+        populationDensity: PopulationDensity
+        latitude: Latitude
+        longitude: Longitude
+        type: Type
+
+    - type: transform
+      transforms:
+        - field: population
+          fn: toNumber
+        - field: areaKm2
+          fn: toNumber
+        - field: populationDensity
+          fn: toNumber
+        - field: latitude
+          fn: toNumber
+        - field: longitude
+          fn: toNumber
+
+    - type: validate
+    - type: persist
