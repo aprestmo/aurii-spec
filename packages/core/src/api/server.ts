@@ -37,7 +37,7 @@ import type {
 	ImportDefinition,
 	PipelineStep,
 } from "../import/types";
-import { executeQuery } from "../query/executor";
+import { executeQuery, explainQuery } from "../query/executor";
 import { parseQuery } from "../query/parser";
 import { getSchema, listSchemas, registerSchema } from "../schema/registry";
 import type { SchemaDefinition } from "../schema/types";
@@ -254,8 +254,18 @@ export function buildApp(options: AppOptions = {}) {
 							set.status = 400;
 							return { error: 'Missing query parameter "q"' };
 						}
-						const parsed = parseQuery(q);
-						return executeQuery(parsed, dataset);
+						const explain =
+							(query as Record<string, string | undefined>)["explain"] ===
+							"true";
+						return executeQuery(q, dataset, { explain });
+					})
+					.get("/query/explain", async ({ query, set }) => {
+						const q = (query as Record<string, string | undefined>)["q"];
+						if (!q) {
+							set.status = 400;
+							return { error: 'Missing query parameter "q"' };
+						}
+						return explainQuery(q);
 					})
 
 					// Import: analyze (multipart file upload)

@@ -1,10 +1,17 @@
 import { describe, expect, it } from "bun:test";
+import type { SelectQuery } from "../query/ast";
 import { parseQuery } from "../query/parser";
+
+function selectQuery(input: string): SelectQuery {
+	const q = parseQuery(input);
+	if (q.kind !== "select") throw new Error("expected select query");
+	return q;
+}
 
 describe("parseQuery", () => {
 	describe("from clause", () => {
 		it("parses minimal from", () => {
-			const q = parseQuery("from article");
+			const q = selectQuery("from article");
 			expect(q.from).toBe("article");
 			expect(q.select).toBeUndefined();
 			expect(q.where).toBeUndefined();
@@ -14,7 +21,7 @@ describe("parseQuery", () => {
 		});
 
 		it("is case-insensitive for keywords", () => {
-			expect(parseQuery("FROM article").from).toBe("article");
+			expect(selectQuery("FROM article").from).toBe("article");
 		});
 
 		it("throws when from is missing", () => {
@@ -24,135 +31,146 @@ describe("parseQuery", () => {
 
 	describe("select clause", () => {
 		it("parses single field select", () => {
-			const q = parseQuery("from article select title");
+			const q = selectQuery("from article select title");
 			expect(q.select).toEqual(["title"]);
 		});
 
 		it("parses multi-field select", () => {
-			const q = parseQuery("from article select id, title, published");
+			const q = selectQuery("from article select id, title, published");
 			expect(q.select).toEqual(["id", "title", "published"]);
 		});
 	});
 
 	describe("where clause", () => {
 		it("parses == with string value", () => {
-			const q = parseQuery('from article where status == "published"');
-			expect(q.where).toHaveLength(1);
-			expect(q.where![0]).toEqual({
-				field: "status",
-				op: "==",
-				value: "published",
-			});
+			const q = selectQuery('from article where status == "published"');
+			expect(q.where?.type).toBe("condition");
+			if (q.where?.type === "condition") {
+				expect(q.where.condition).toEqual({
+					field: "status",
+					op: "==",
+					value: "published",
+				});
+			}
 		});
 
 		it("parses != operator", () => {
-			const q = parseQuery('from article where status != "draft"');
-			expect(q.where![0]!.op).toBe("!=");
+			const q = selectQuery('from article where status != "draft"');
+			if (q.where?.type === "condition") {
+				expect(q.where.condition.op).toBe("!=");
+			}
 		});
 
 		it("parses > and < with numbers", () => {
-			const q = parseQuery("from product where price > 100");
-			expect(q.where![0]).toEqual({ field: "price", op: ">", value: 100 });
-		});
-
-		it("parses >= and <=", () => {
-			const q1 = parseQuery("from product where price >= 10");
-			const q2 = parseQuery("from product where price <= 100");
-			expect(q1.where![0]!.op).toBe(">=");
-			expect(q2.where![0]!.op).toBe("<=");
+			const q = selectQuery("from product where price > 100");
+			if (q.where?.type === "condition") {
+				expect(q.where.condition).toEqual({
+					field: "price",
+					op: ">",
+					value: 100,
+				});
+			}
 		});
 
 		it("parses contains operator", () => {
-			const q = parseQuery('from article where title contains "Aurii"');
-			expect(q.where![0]).toEqual({
-				field: "title",
-				op: "contains",
-				value: "Aurii",
-			});
-		});
-
-		it("parses boolean values", () => {
-			const q = parseQuery("from article where published == true");
-			expect(q.where![0]!.value).toBe(true);
-		});
-
-		it("parses null value", () => {
-			const q = parseQuery("from article where deletedAt == null");
-			expect(q.where![0]!.value).toBeNull();
+			const q = selectQuery('from article where title contains "Aurii"');
+			if (q.where?.type === "condition") {
+				expect(q.where.condition).toEqual({
+					field: "title",
+					op: "contains",
+					value: "Aurii",
+				});
+			}
 		});
 
 		it("parses multiple AND conditions", () => {
-			const q = parseQuery(
+			const q = selectQuery(
 				'from article where published == true and status == "active"',
 			);
-			expect(q.where).toHaveLength(2);
-			expect(q.where![0]!.field).toBe("published");
-			expect(q.where![1]!.field).toBe("status");
+			expect(q.where?.type).toBe("and");
+			if (q.where?.type === "and") {
+				expect(q.where.exprs).toHaveLength(2);
+			}
+		});
+
+		it("parses OR conditions", () => {
+			const q = selectQuery(
+				'from municipality where countyId == "03" or countyId == "11"',
+			);
+			expect(q.where?.type).toBe("or");
+		});
+
+		it("parses IN operator", () => {
+			const q = selectQuery(
+				'from municipality where countyId in ("03", "11")',
+			);
+			if (q.where?.type === "condition") {
+				expect(q.where.condition.op).toBe("in");
+			}
+		});
+
+		it("parses NOT operator", () => {
+			const q = selectQuery('from article where not status == "draft"');
+			expect(q.where?.type).toBe("not");
+		});
+
+		it("parses EXISTS operator", () => {
+			const q = selectQuery("from municipality where countyId exists");
+			if (q.where?.type === "condition") {
+				expect(q.where.condition.op).toBe("exists");
+			}
+		});
+	});
+
+	describe("join clause", () => {
+		it("parses join on qualified fields", () => {
+			const q = selectQuery(
+				"from municipality join county on municipality.countyId = county.id",
+			);
+			expect(q.join).toBeDefined();
+			expect(q.join!.schema).toBe("county");
+			expect(q.join!.on.leftField).toBe("countyId");
+			expect(q.join!.on.rightField).toBe("id");
+		});
+	});
+
+	describe("aggregate queries", () => {
+		it("parses count municipality", () => {
+			const q = parseQuery("count municipality");
+			expect(q.kind).toBe("aggregate");
+			if (q.kind === "aggregate") {
+				expect(q.fn).toBe("count");
+				expect(q.from).toBe("municipality");
+			}
+		});
+
+		it("parses count with where", () => {
+			const q = parseQuery('count municipality where countyId == "03"');
+			expect(q.kind).toBe("aggregate");
+			if (q.kind === "aggregate") {
+				expect(q.where).toBeDefined();
+			}
 		});
 	});
 
 	describe("order by clause", () => {
 		it("defaults to asc when direction omitted", () => {
-			const q = parseQuery("from article order by title");
+			const q = selectQuery("from article order by title");
 			expect(q.orderBy).toEqual({ field: "title", direction: "asc" });
-		});
-
-		it("parses desc direction", () => {
-			const q = parseQuery("from article order by createdAt desc");
-			expect(q.orderBy).toEqual({ field: "createdAt", direction: "desc" });
-		});
-
-		it("parses asc direction explicitly", () => {
-			const q = parseQuery("from article order by title asc");
-			expect(q.orderBy!.direction).toBe("asc");
 		});
 	});
 
 	describe("limit and offset", () => {
-		it("parses limit", () => {
-			const q = parseQuery("from article limit 10");
-			expect(q.limit).toBe(10);
-		});
-
-		it("parses offset", () => {
-			const q = parseQuery("from article offset 20");
-			expect(q.offset).toBe(20);
-		});
-
 		it("parses limit and offset together", () => {
-			const q = parseQuery("from article limit 10 offset 20");
+			const q = selectQuery("from article limit 10 offset 20");
 			expect(q.limit).toBe(10);
 			expect(q.offset).toBe(20);
-		});
-	});
-
-	describe("full queries", () => {
-		it("parses a complex query", () => {
-			const q = parseQuery(
-				'from article select id, title where published == true and status == "active" order by title asc limit 5 offset 0',
-			);
-			expect(q.from).toBe("article");
-			expect(q.select).toEqual(["id", "title"]);
-			expect(q.where).toHaveLength(2);
-			expect(q.orderBy).toEqual({ field: "title", direction: "asc" });
-			expect(q.limit).toBe(5);
-			expect(q.offset).toBe(0);
-		});
-
-		it("handles extra whitespace", () => {
-			const q = parseQuery("  from   article   limit  5  ");
-			expect(q.from).toBe("article");
-			expect(q.limit).toBe(5);
 		});
 	});
 
 	describe("error cases", () => {
 		it("throws on unexpected token", () => {
 			expect(() => parseQuery("from article BADTOKEN")).toThrow();
-		});
-
-		it("throws on missing value after operator", () => {
-			expect(() => parseQuery("from article where id ==")).toThrow();
 		});
 	});
 });

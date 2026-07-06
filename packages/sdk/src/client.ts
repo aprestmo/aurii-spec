@@ -18,6 +18,7 @@ import type {
 	ImportRunRecord,
 	ImportRunRequest,
 	QueryResult,
+	PlanExplanation,
 	SchemaDefinition,
 	StorageStats,
 	StoredSchema,
@@ -145,10 +146,15 @@ function buildQueryApi(
 	defaultDataset: string,
 ) {
 	return {
-		run(q: string, dataset?: string): Promise<QueryResult> {
+		run(q: string, dataset?: string, options?: { explain?: boolean }): Promise<QueryResult> {
 			const ds = dataset ?? defaultDataset;
 			const params = new URLSearchParams({ q, dataset: ds });
+			if (options?.explain) params.set("explain", "true");
 			return request(baseUrl, `/query?${params}`, token);
+		},
+		explain(q: string): Promise<PlanExplanation> {
+			const params = new URLSearchParams({ q });
+			return request(baseUrl, `/query/explain?${params}`, token);
 		},
 	};
 }

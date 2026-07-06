@@ -203,6 +203,18 @@ Core returns Entities.
 
 Storage remains invisible.
 
+## Endpoints (Phase 3)
+
+```
+GET /query?q=<query>&dataset=<id>
+GET /query?q=<query>&dataset=<id>&explain=true
+GET /query/explain?q=<query>
+```
+
+Response includes `entities`, `count`, and optionally `aggregate`, `plan`, and `explain` (steps + estimated schemas).
+
+See `docs/Query-Language-v1.md` for syntax.
+
 ---
 
 # Search API

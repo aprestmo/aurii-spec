@@ -45,7 +45,7 @@ const MUNICIPALITY_SCHEMA: SchemaDefinition = {
 	fields: [
 		{ name: "id", type: "string", required: true },
 		{ name: "name", type: "string", required: true },
-		{ name: "countyId", type: "string", required: true },
+		{ name: "countyId", type: "reference", to: "county", required: true },
 		{ name: "source", type: "string" },
 	],
 };
@@ -56,7 +56,12 @@ const POSTAL_CODE_SCHEMA: SchemaDefinition = {
 	fields: [
 		{ name: "code", type: "string", required: true },
 		{ name: "city", type: "string", required: true },
-		{ name: "municipalityId", type: "string", required: true },
+		{
+			name: "municipalityId",
+			type: "reference",
+			to: "municipality",
+			required: true,
+		},
 		{ name: "municipalityName", type: "string" },
 		{ name: "postalCodeType", type: "string" },
 		{ name: "source", type: "string" },
@@ -92,13 +97,12 @@ async function importAll(): Promise<{
 	postalCodes: number;
 }> {
 	const importsDir = resolve(DEMO, "imports");
-	const results = await Promise.all(
-		["counties", "municipalities", "postal-codes"].map(async (name) => {
-			const file = resolve(importsDir, `${name}.yaml`);
-			const def = await loadImportDefinition(file);
-			return runImport(def, resolve(file, ".."));
-		}),
-	);
+	const results = [];
+	for (const name of ["counties", "municipalities", "postal-codes"]) {
+		const file = resolve(importsDir, `${name}.yaml`);
+		const def = await loadImportDefinition(file);
+		results.push(await runImport(def, resolve(file, ".."), { datasetId: DATASET }));
+	}
 
 	return {
 		counties: results[0]!.imported,
@@ -120,13 +124,13 @@ describe("1. Schema — complete definitions with validation and relationships",
 		expect(ids).toContain("postal-code");
 	});
 
-	it("municipality schema declares countyId as a relationship field", async () => {
+	it("municipality schema declares countyId as a reference field", async () => {
 		await setupDataset();
 		const storage = await getStorage();
 		const schema = await storage.getSchema("municipality", DATASET);
 		const countyField = schema!.fields.find((f) => f.name === "countyId");
 		expect(countyField?.required).toBe(true);
-		expect(countyField?.type).toBe("string");
+		expect(countyField?.type).toBe("reference");
 	});
 });
 

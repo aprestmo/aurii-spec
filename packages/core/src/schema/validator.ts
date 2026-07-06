@@ -1,9 +1,9 @@
 import type {
 	FieldDefinition,
-	FieldType,
 	SchemaDefinition,
 	ValidationResult,
 } from "./types";
+import { isReferenceField, referenceTarget } from "./types";
 
 const ISO_DATE_RE =
 	/^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:\d{2})?)?$/;
@@ -11,7 +11,7 @@ const ISO_DATE_RE =
 function checkType(
 	name: string,
 	value: unknown,
-	type: FieldType,
+	type: FieldDefinition["type"],
 ): string | null {
 	switch (type) {
 		case "string":
@@ -41,9 +41,10 @@ function checkType(
 				? null
 				: `Field "${name}" must be an array of numbers`;
 		case "reference":
-			return typeof value === "string"
+			if (value === null || value === undefined) return null;
+			return typeof value === "string" || Array.isArray(value)
 				? null
-				: `Field "${name}" must be a string reference ID`;
+				: `Field "${name}" must be a string reference ID or array of IDs`;
 		default:
 			return null;
 	}
@@ -65,8 +66,22 @@ export function validateEntity(
 		}
 
 		if (!missing) {
-			const typeError = checkType(field.name, value, field.type);
-			if (typeError) errors.push(typeError);
+			if (isReferenceField(field) && field.multiple) {
+				if (!Array.isArray(value)) {
+					errors.push(`Field "${field.name}" must be an array of reference IDs`);
+					continue;
+				}
+				for (const id of value) {
+					if (typeof id !== "string") {
+						errors.push(
+							`Field "${field.name}" must contain string reference IDs`,
+						);
+					}
+				}
+			} else {
+				const typeError = checkType(field.name, value, field.type);
+				if (typeError) errors.push(typeError);
+			}
 		}
 	}
 
@@ -107,6 +122,11 @@ export function validateSchemaDefinition(def: unknown): ValidationResult {
 			if (!f["type"] || !VALID_TYPES.has(f["type"] as string)) {
 				errors.push(
 					`Field "${f["name"] ?? i}" has invalid type "${f["type"]}". Valid: ${[...VALID_TYPES].join(", ")}`,
+				);
+			}
+			if (f["type"] === "reference" && !f["to"] && !f["schema"]) {
+				errors.push(
+					`Reference field "${f["name"] ?? i}" must declare a target schema via \`to\``,
 				);
 			}
 		}

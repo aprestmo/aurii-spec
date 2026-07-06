@@ -50,6 +50,8 @@ export interface ImportPipeline {
 	steps: PipelineStep[];
 }
 
+export type ReferenceValidationMode = "strict" | "warning" | "skip";
+
 export interface ImportDefinition {
 	id: string;
 	name: string;
@@ -67,12 +69,20 @@ export interface ImportDefinition {
 	 * that passes validation.
 	 */
 	deduplicateBy?: string;
+	/**
+	 * How to handle rows with references to missing entities.
+	 * - strict: fail the row (default)
+	 * - warning: import with a warning in errors
+	 * - skip: remove invalid reference values and import
+	 */
+	referenceValidation?: ReferenceValidationMode;
 }
 
 export interface RowError {
 	row: number;
 	message: string;
 	data?: Record<string, unknown>;
+	severity?: "error" | "warning";
 }
 
 export interface ImportResult {

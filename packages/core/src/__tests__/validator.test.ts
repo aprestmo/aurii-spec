@@ -170,10 +170,12 @@ describe("validateSchemaDefinition", () => {
 			"number[]",
 		];
 		for (const type of types) {
+			const field: Record<string, unknown> = { name: "f", type };
+			if (type === "reference") field["to"] = "other";
 			const r = validateSchemaDefinition({
 				id: "x",
 				name: "X",
-				fields: [{ name: "f", type }],
+				fields: [field],
 			});
 			expect(r.valid).toBe(true);
 		}

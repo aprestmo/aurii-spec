@@ -22,6 +22,8 @@ export {
 	slugifyFieldName,
 } from "./import/analyze";
 // Import
+export type { ReferenceValidationMode } from "./import/reference-validator";
+export { validateReferences } from "./import/reference-validator";
 export { loadImportDefinition, runImport } from "./import/engine";
 export type {
 	FieldTransform,
@@ -34,10 +36,23 @@ export type {
 export { runPipeline, runStep } from "./pipeline/runner";
 export { applyTransform } from "./pipeline/transforms";
 export type { QueryResult } from "./query/executor";
-export { executeQuery } from "./query/executor";
-export type { Condition, Operator, OrderBy, ParsedQuery } from "./query/parser";
+export { executeQuery, explainQuery } from "./query/executor";
+export type {
+	AggregateQuery,
+	Condition,
+	JoinClause,
+	QueryAST,
+	Operator,
+	OrderBy,
+	ScalarValue,
+	SelectQuery,
+	WhereExpr,
+} from "./query/ast";
+export type { ParsedQuery } from "./query/parser";
 // Query
-export { parseQuery } from "./query/parser";
+export { parseQuery, toLegacyParsedQuery } from "./query/parser";
+export type { ExecutionPlan, PlanExplanation } from "./query/plan";
+export { explainPlan, planQuery } from "./query/planner";
 // Schema
 export {
 	deleteSchema,

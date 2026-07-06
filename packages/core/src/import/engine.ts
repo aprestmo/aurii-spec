@@ -1,7 +1,11 @@
 import { resolve } from "path";
 import { parse as parseYaml } from "yaml";
-import type { EntityInput } from "../entity/types";
+import type { Entity, EntityInput } from "../entity/types";
 import { emit } from "../events/emitter";
+import {
+	referenceIssuesToErrors,
+	validateReferences,
+} from "./reference-validator";
 import { runPipeline } from "../pipeline/runner";
 import { DEFAULT_DATASET, getStorage } from "../storage";
 import { readCsvFile } from "./sources/csv";
@@ -88,6 +92,15 @@ export async function runImport(
 	const total = rows.length;
 	const errors: RowError[] = [];
 	const toInsert: EntityInput[] = [];
+	const refMode = def.referenceValidation ?? "strict";
+
+	const lookupRef = async (
+		targetSchema: string,
+		id: string,
+	): Promise<Entity | null> => {
+		const entities = await storage.listEntities(targetSchema, datasetId, 10000);
+		return entities.find((e) => e.data["id"] === id) ?? null;
+	};
 
 	for (let i = 0; i < rows.length; i++) {
 		const row = rows[i]!;
@@ -96,18 +109,48 @@ export async function runImport(
 
 		if (!result.ok) {
 			errors.push({ row: i + 1, message: result.errors.join("; "), data: row });
-		} else {
-			const cleanData: Record<string, unknown> = {};
-			for (const field of schema.fields) {
-				const v = result.row[field.name];
-				if (v !== null && v !== undefined && v !== "") {
-					cleanData[field.name] = v;
-				} else if (field.default !== undefined) {
-					cleanData[field.name] = field.default;
-				}
-			}
-			toInsert.push({ schemaId: def.schema, data: cleanData });
+			continue;
 		}
+
+		const refResult = await validateReferences(
+			result.row,
+			schema,
+			lookupRef,
+			refMode,
+		);
+
+		const refMessages = referenceIssuesToErrors(refResult.issues, refMode);
+		if (refMode === "strict" && refMessages.length > 0) {
+			errors.push({
+				row: i + 1,
+				message: refMessages.join("; "),
+				data: row,
+			});
+			continue;
+		}
+
+		if (refMode === "warning" && refMessages.length > 0) {
+			for (const msg of refMessages) {
+				errors.push({
+					row: i + 1,
+					message: msg,
+					data: row,
+					severity: "warning",
+				});
+			}
+		}
+
+		const finalRow = refResult.data;
+		const cleanData: Record<string, unknown> = {};
+		for (const field of schema.fields) {
+			const v = finalRow[field.name];
+			if (v !== null && v !== undefined && v !== "") {
+				cleanData[field.name] = v;
+			} else if (field.default !== undefined) {
+				cleanData[field.name] = field.default;
+			}
+		}
+		toInsert.push({ schemaId: def.schema, data: cleanData });
 	}
 
 	let inserted = 0;
@@ -131,7 +174,7 @@ export async function runImport(
 	}
 
 	const imported = inserted + updated;
-	const failed = errors.length;
+	const failed = errors.filter((e) => e.severity !== "warning").length;
 	const durationMs = Date.now() - startedAt;
 
 	await storage.updateImportRun(runId, {

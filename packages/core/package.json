@@ -1,6 +1,6 @@
 {
   "name": "@aurii/core",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Aurii Core — Declarative Runtime for Structured Knowledge",
   "module": "src/index.ts",
   "type": "module",

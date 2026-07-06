@@ -22,7 +22,7 @@ Kartverket + Bring  →  import  →  PostgreSQL  →  query  →  API  →  SDK
 | Live API import test | `packages/core/src/__tests__/norwegian-geo-import.test.ts` |
 | SDK vertical slice | `packages/sdk/src/__tests__/vertical-slice.test.ts` |
 | Public website demo | `apps/geo` |
-| Phase 2.2 report | `Phase2.2.md` |
+| Phase 3 relational tests | `packages/core/src/__tests__/phase-3-relational.test.ts` |
 
 ---
 
@@ -31,8 +31,8 @@ Kartverket + Bring  →  import  →  PostgreSQL  →  query  →  API  →  SDK
 | Schema | Records | Natural key | Relationships |
 |--------|---------|-------------|---------------|
 | `county` | 15 | `id` | — |
-| `municipality` | 357 | `id` | `countyId` → county.id |
-| `postal-code` | 5,122 | `code` | `municipalityId` → municipality.id |
+| `municipality` | 357 | `id` | `countyId` → `county` (reference) |
+| `postal-code` | 5,122 | `code` | `municipalityId` → `municipality` (reference) |
 
 Dataset ID: **`norwegian-geo`**
 
@@ -89,8 +89,9 @@ Use this checklist:
 ```bash
 cd packages/core
 
-bun run cli query 'from county where name == "Oslo"' --dataset norwegian-geo
 bun run cli query 'from municipality where countyId == "03"' --dataset norwegian-geo
+bun run cli query 'from municipality join county on municipality.countyId = county.id where municipality.id == "0301"' --dataset norwegian-geo
+bun run cli query 'count municipality where countyId == "03"' --dataset norwegian-geo
 bun run cli query 'from postal-code where code == "0001"' --dataset norwegian-geo
 ```
 
@@ -111,7 +112,7 @@ Build validates all routes resolve. See `apps/geo/README.md`.
 ## What not to use this for
 
 - Performance benchmarking at scale (dataset is small by design)
-- Features explicitly deferred to Phase 3 (RBAC, plugins, AI, search, joins)
+- Features explicitly deferred to Phase 4+ (RBAC, plugins, AI, full-text search, dot-notation traversal)
 - Domain-specific Core hacks — behaviour belongs in schemas, imports, or demo apps
 
 ---

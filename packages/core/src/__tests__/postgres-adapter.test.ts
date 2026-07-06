@@ -221,7 +221,7 @@ describe.skipIf(!DATABASE_URL)("PostgresAdapter", () => {
 		});
 	});
 
-	describe("executeQuery — JSONB semantics", () => {
+	describe("executePlan — JSONB semantics", () => {
 		beforeEach(async () => {
 			await db.createDataset({ id: "test", name: "Test" });
 			await db.upsertSchema(sampleSchema, "test");
@@ -245,67 +245,100 @@ describe.skipIf(!DATABASE_URL)("PostgresAdapter", () => {
 		});
 
 		it("returns all entities with just from clause", async () => {
-			const result = await db.executeQuery({ from: "article" }, "test");
-			expect(result).toHaveLength(3);
+			const result = await db.executePlan(
+				{ kind: "scan", schemaId: "article", alias: "article" },
+				"test",
+			);
+			expect(result.entities).toHaveLength(3);
 		});
 
 		it("filters with == on a boolean field (JSONB cast, not text compare)", async () => {
-			const result = await db.executeQuery(
+			const result = await db.executePlan(
 				{
-					from: "article",
-					where: [{ field: "published", op: "==", value: true }],
+					kind: "scan",
+					schemaId: "article",
+					alias: "article",
+					where: {
+						type: "condition",
+						condition: { field: "published", op: "==", value: true },
+					},
 				},
 				"test",
 			);
-			expect(result).toHaveLength(2);
-			expect(result.every((e) => e.data["published"] === true)).toBe(true);
+			expect(result.entities).toHaveLength(2);
+			expect(result.entities.every((e) => e.data["published"] === true)).toBe(
+				true,
+			);
 		});
 
 		it("filters with > on a numeric field (numeric cast, not lexical compare)", async () => {
-			// Lexical string comparison would put "50" < "30" wrong; numeric
-			// casting is what makes this a meaningful PostgreSQL-specific test.
-			const result = await db.executeQuery(
-				{ from: "article", where: [{ field: "views", op: ">", value: 20 }] },
-				"test",
-			);
-			expect(result).toHaveLength(2);
-		});
-
-		it("filters with contains (ILIKE) case-insensitively", async () => {
-			const result = await db.executeQuery(
+			const result = await db.executePlan(
 				{
-					from: "article",
-					where: [{ field: "title", op: "contains", value: "LPH" }],
+					kind: "scan",
+					schemaId: "article",
+					alias: "article",
+					where: {
+						type: "condition",
+						condition: { field: "views", op: ">", value: 20 },
+					},
 				},
 				"test",
 			);
-			expect(result).toHaveLength(1);
-			expect(result[0]?.data["title"]).toBe("Alpha");
+			expect(result.entities).toHaveLength(2);
+		});
+
+		it("filters with contains (ILIKE) case-insensitively", async () => {
+			const result = await db.executePlan(
+				{
+					kind: "scan",
+					schemaId: "article",
+					alias: "article",
+					where: {
+						type: "condition",
+						condition: { field: "title", op: "contains", value: "LPH" },
+					},
+				},
+				"test",
+			);
+			expect(result.entities).toHaveLength(1);
+			expect(result.entities[0]?.data["title"]).toBe("Alpha");
 		});
 
 		it("orders numerically by a JSONB numeric field", async () => {
-			const result = await db.executeQuery(
-				{ from: "article", orderBy: { field: "views", direction: "asc" } },
+			const result = await db.executePlan(
+				{
+					kind: "scan",
+					schemaId: "article",
+					alias: "article",
+					orderBy: { field: "views", direction: "asc" },
+				},
 				"test",
 			);
-			expect(result.map((e) => e.data["views"])).toEqual([10, 30, 50]);
+			expect(result.entities.map((e) => e.data["views"])).toEqual([10, 30, 50]);
 		});
 
 		it("applies limit", async () => {
-			const result = await db.executeQuery(
-				{ from: "article", limit: 2 },
+			const result = await db.executePlan(
+				{ kind: "scan", schemaId: "article", alias: "article", limit: 2 },
 				"test",
 			);
-			expect(result).toHaveLength(2);
+			expect(result.entities).toHaveLength(2);
 		});
 
 		it("applies select projection", async () => {
-			const result = await db.executeQuery(
-				{ from: "article", select: ["title"] },
+			const result = await db.executePlan(
+				{
+					kind: "scan",
+					schemaId: "article",
+					alias: "article",
+					select: ["title"],
+				},
 				"test",
 			);
-			expect(result.every((e) => Object.keys(e.data).length === 1)).toBe(true);
-			expect(result.every((e) => "title" in e.data)).toBe(true);
+			expect(result.entities.every((e) => Object.keys(e.data).length === 1)).toBe(
+				true,
+			);
+			expect(result.entities.every((e) => "title" in e.data)).toBe(true);
 		});
 	});
 
