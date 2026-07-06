@@ -1,0 +1,33 @@
+id: demo-news-import
+name: Demo — Import News Articles
+description: Imports the demo news articles CSV into the news-article schema
+schema: news-article
+dataset: demo-news
+source:
+  type: csv
+  path: ./articles.csv
+pipeline:
+  steps:
+    - type: map
+      mapping:
+        headline: Headline
+        slug: Slug
+        summary: Summary
+        author: Author
+        category: Category
+        tags: Tags
+        published: Published
+        publishedAt: PublishedAt
+        source: Source
+
+    - type: transform
+      transforms:
+        - field: published
+          fn: toBoolean
+        - field: publishedAt
+          fn: toDate
+        - field: slug
+          fn: toSlug
+
+    - type: validate
+    - type: persist

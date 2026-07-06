@@ -1,0 +1,61 @@
+id: product
+name: Product
+description: An e-commerce product with pricing, category and inventory information
+fields:
+  - name: sku
+    type: string
+    required: true
+    description: Unique product SKU
+
+  - name: name
+    type: string
+    required: true
+    description: Product display name
+
+  - name: slug
+    type: string
+    required: true
+    description: URL-safe identifier
+
+  - name: description
+    type: string
+    description: Full product description
+
+  - name: category
+    type: string
+    description: Product category
+
+  - name: brand
+    type: string
+    description: Brand or manufacturer name
+
+  - name: price
+    type: number
+    required: true
+    description: Retail price (in the store currency)
+
+  - name: compareAtPrice
+    type: number
+    description: Original price before any discount
+
+  - name: currency
+    type: string
+    default: USD
+    description: ISO 4217 currency code
+
+  - name: inStock
+    type: boolean
+    default: true
+    description: Whether the product is currently available
+
+  - name: stockQuantity
+    type: number
+    description: Available units in inventory
+
+  - name: weight
+    type: number
+    description: Product weight in kilograms
+
+  - name: tags
+    type: string
+    description: Comma-separated product tags

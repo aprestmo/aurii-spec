@@ -1,0 +1,18 @@
+{
+  "name": "aurii",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Aurii — Declarative Runtime for Structured Knowledge",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "bun run --filter='*' build",
+    "test": "bun run --filter='@aurii/core' test && bun run --filter='@aurii/sdk' test",
+    "lint": "bun run --filter='*' lint",
+    "typecheck": "bun run --filter='*' typecheck",
+    "dev": "bun run --filter='@aurii/core' dev & bun run --filter='@aurii/studio' dev",
+    "serve": "bun run --filter='@aurii/core' serve"
+  }
+}

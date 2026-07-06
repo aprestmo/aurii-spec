@@ -1,0 +1,5 @@
+# Bun workspace configuration
+# https://bun.sh/docs/install/workspaces
+
+[install]
+# Use workspace protocol for local packages

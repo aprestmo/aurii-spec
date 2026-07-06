@@ -1,0 +1,28 @@
+id: demo-companies-import
+name: Demo — Import Companies
+description: Imports the demo company directory JSON into the company schema
+schema: company
+dataset: demo-companies
+deduplicateBy: registrationNumber
+source:
+  type: json
+  path: ./companies.json
+pipeline:
+  steps:
+    - type: map
+      mapping:
+        registrationNumber: registrationNumber
+        name: name
+        slug: slug
+        industry: industry
+        founded: founded
+        employees: employees
+        revenue: revenue
+        country: country
+        city: city
+        website: website
+        description: description
+        listed: listed
+
+    - type: validate
+    - type: persist

@@ -1,0 +1,20 @@
+{
+  "name": "@aurii/studio",
+  "version": "0.2.0",
+  "description": "Aurii Studio — admin client for the Aurii Runtime",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "test": "bun test src/__tests__",
+    "typecheck": "astro check",
+    "lint": "bunx @biomejs/biome lint src/"
+  },
+  "dependencies": {
+    "@aurii/sdk": "workspace:*",
+    "@astrojs/check": "^0.9.0",
+    "astro": "^5.0.0",
+    "typescript": "^6.0.3"
+  }
+}

@@ -1,6 +1,7 @@
 import { resolve } from "path";
 import { parse as parseYaml } from "yaml";
 import type { EntityInput } from "../entity/types";
+import { emit } from "../events/emitter";
 import { runPipeline } from "../pipeline/runner";
 import { DEFAULT_DATASET, getStorage } from "../storage";
 import { readCsvFile } from "./sources/csv";
@@ -74,6 +75,15 @@ export async function runImport(
 		completedAt: null,
 	});
 
+	emit({
+		type: "import.started",
+		runId,
+		definitionId: def.id,
+		schemaId: def.schema,
+		datasetId,
+		dryRun,
+	});
+
 	const rows = await loadRows(def, basePath);
 	const total = rows.length;
 	const errors: RowError[] = [];
@@ -131,6 +141,19 @@ export async function runImport(
 		failed,
 		errors,
 		completedAt: new Date().toISOString(),
+	});
+
+	emit({
+		type: "import.finished",
+		runId,
+		definitionId: def.id,
+		schemaId: def.schema,
+		datasetId,
+		dryRun,
+		total,
+		imported,
+		failed,
+		durationMs,
 	});
 
 	return {

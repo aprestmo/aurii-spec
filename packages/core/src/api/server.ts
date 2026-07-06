@@ -22,11 +22,14 @@
  */
 
 import { cors } from "@elysiajs/cors";
+import { swagger } from "@elysiajs/swagger";
 import { Elysia } from "elysia";
 import { mkdir } from "fs/promises";
 import { join, resolve } from "path";
 import { parse as parseYaml } from "yaml";
+import { listCapabilities } from "../capabilities/registry";
 import { countEntities, getEntity, listEntities } from "../entity/store";
+import { emit } from "../events/emitter";
 import { analyzeContent } from "../import/analyze";
 import { loadImportDefinition, runImport } from "../import/engine";
 import type {
@@ -96,6 +99,27 @@ export function buildApp(options: AppOptions = {}) {
 					allowedHeaders: ["Content-Type", "Authorization"],
 				}),
 			)
+			.use(
+				swagger({
+					documentation: {
+						info: {
+							title: "Aurii Runtime API",
+							version: "0.2.0",
+							description:
+								"Declarative Runtime for Structured Knowledge — HTTP API",
+						},
+						tags: [
+							{ name: "Health", description: "Runtime health" },
+							{ name: "Datasets", description: "Dataset management" },
+							{ name: "Schemas", description: "Schema registry" },
+							{ name: "Entities", description: "Entity store" },
+							{ name: "Query", description: "Query Language" },
+							{ name: "Import", description: "Import pipeline" },
+							{ name: "Stats", description: "Storage statistics" },
+						],
+					},
+				}),
+			)
 			.use(yamlBodyParser)
 			.onError(({ error, set }) => {
 				set.status = 500;
@@ -103,15 +127,24 @@ export function buildApp(options: AppOptions = {}) {
 			})
 
 			// ── Public ──────────────────────────────────────────────────────────────────
-			.get("/health", async () => {
-				const storage = await getStorage();
-				return {
-					status: "ok",
-					phase: "2",
-					version: "0.2.0",
-					storage: storage.kind,
-				};
-			})
+			.get(
+				"/health",
+				async () => {
+					const storage = await getStorage();
+					return {
+						status: "ok",
+						phase: "2",
+						version: "0.2.0",
+						storage: storage.kind,
+						capabilities: listCapabilities().map((c) => ({
+							id: c.id,
+							kind: c.kind,
+							status: c.status,
+						})),
+					};
+				},
+				{ tags: ["Health"] },
+			)
 
 			// ── Protected ─────────────────────────────────────────────────────────────
 			// derive and onBeforeHandle are inlined here so TypeScript resolves `dataset`
@@ -157,10 +190,16 @@ export function buildApp(options: AppOptions = {}) {
 							};
 						}
 						const storage = await getStorage();
-						set.status = 201;
-						return storage.createDataset(
+						const dataset = await storage.createDataset(
 							b as { id: string; name: string; description?: string },
 						);
+						emit({
+							type: "dataset.created",
+							datasetId: dataset.id,
+							name: dataset.name,
+						});
+						set.status = 201;
+						return dataset;
 					})
 
 					// Schemas

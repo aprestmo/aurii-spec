@@ -1,0 +1,13 @@
+SKU,Name,Slug,Description,Category,Brand,Price,CompareAtPrice,Currency,InStock,StockQuantity,Weight,Tags
+"LAPTOP-PRO-15","Pro Laptop 15","pro-laptop-15","High-performance laptop with 15-inch display, 16GB RAM and 512GB SSD","Electronics","TechBrand","1299.99","1499.99","USD","true","45","2.1","laptop,computer,electronics"
+"WIRELESS-HEADPHONES-X1","Wireless Headphones X1","wireless-headphones-x1","Over-ear noise-cancelling wireless headphones with 30-hour battery life","Audio","SoundCo","249.99","299.99","USD","true","120","0.35","headphones,audio,wireless"
+"RUNNING-SHOE-M10","Running Shoe M10","running-shoe-m10","Lightweight running shoe with responsive foam sole and breathable mesh upper","Footwear","RunFast","89.99","","USD","true","234","0.32","shoes,running,sport"
+"COFFEE-MAKER-DX","Coffee Maker DX","coffee-maker-dx","12-cup programmable drip coffee maker with built-in grinder","Kitchen","BrewMaster","129.99","159.99","USD","true","67","1.8","coffee,kitchen,appliance"
+"YOGA-MAT-PRO","Yoga Mat Pro","yoga-mat-pro","6mm non-slip professional yoga mat with carrying strap","Sports","ZenFit","49.99","","USD","true","312","0.9","yoga,fitness,mat"
+"DESK-LAMP-LED","LED Desk Lamp","led-desk-lamp","Adjustable LED desk lamp with USB charging port and touch dimmer","Office","BrightWork","39.99","59.99","USD","true","89","0.6","lamp,desk,office,led"
+"WATER-BOTTLE-1L","Insulated Water Bottle 1L","insulated-water-bottle-1l","Stainless steel insulated water bottle keeps drinks cold for 24 hours","Outdoor","HydroLife","34.99","","USD","true","456","0.28","bottle,water,outdoor,stainless"
+"WIRELESS-KEYBOARD","Wireless Keyboard","wireless-keyboard","Compact wireless keyboard with scissor-switch keys and 6-month battery life","Electronics","TypeRight","79.99","99.99","USD","true","178","0.55","keyboard,wireless,computer"
+"BACKPACK-30L","Hiking Backpack 30L","hiking-backpack-30l","30-litre hiking backpack with rain cover, hydration sleeve and ergonomic straps","Outdoor","TrailPro","119.99","149.99","USD","true","91","1.2","backpack,hiking,outdoor"
+"NOTEBOOK-A5","Premium Notebook A5","premium-notebook-a5","200-page dot-grid notebook with hardcover and ribbon bookmark","Stationery","WriteWell","18.99","","USD","true","890","0.35","notebook,stationery,writing"
+"BLUETOOTH-SPEAKER","Portable Bluetooth Speaker","portable-bluetooth-speaker","Waterproof portable speaker with 360° sound and 20-hour playtime","Audio","SoundCo","69.99","89.99","USD","true","203","0.45","speaker,bluetooth,audio,waterproof"
+"STANDING-DESK-MAT","Anti-Fatigue Standing Desk Mat","standing-desk-mat","Ergonomic anti-fatigue mat for standing desks, 90cm x 60cm","Office","ErgoZone","59.99","79.99","USD","true","54","2.5","mat,standing,desk,office,ergonomic"

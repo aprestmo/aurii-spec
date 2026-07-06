@@ -24,37 +24,17 @@ import Layout from "../layouts/Layout.astro";
   </div>
 
   <script>
-    import { api, getDataset } from "../lib/api";
-
-    interface Stats {
-      datasetId: string;
-      totalEntities: number;
-      schemas: {
-        schemaId: string;
-        name: string;
-        count: number;
-        fieldCoverage: { field: string; pct: number }[];
-      }[];
-    }
-
-    interface ImportRun {
-      id: string;
-      status: string;
-      dryRun: boolean;
-      total: number;
-      imported: number;
-      failed: number;
-      schemaId: string | null;
-      createdAt: string;
-    }
+    import { getClient } from "../lib/client";
+    import { getDataset } from "../lib/api";
 
     const ds = getDataset();
     document.getElementById("ds-label")!.textContent = `Dataset: ${ds}`;
 
     try {
+      const client = getClient();
       const [stats, imports] = await Promise.all([
-        api<Stats>(`/stats?dataset=${ds}`),
-        api<ImportRun[]>(`/imports?dataset=${ds}`),
+        client.stats.get(ds),
+        client.import.history({ dataset: ds }),
       ]);
 
       document.getElementById("total-entities")!.textContent = String(stats.totalEntities);
