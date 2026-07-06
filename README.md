@@ -405,10 +405,74 @@ Aurii should become the foundation upon which entirely new classes of applicatio
 
 ## Status
 
-Aurii is currently in active design and development.
+**Current state: working prototype — Phase 2 merged, Phase 3 not started.**
 
-The architecture is intentionally being designed before large-scale implementation begins.
+This is not a product. It is an early prototype that validates the import-first loop.
 
-This specification serves as the project's source of truth.
+### What exists and is verified
 
-As implementation progresses, code should follow the specification—not the other way around.
+| Component | Status |
+|-----------|--------|
+| `packages/core` — CLI, HTTP API, schema, import, query, pipeline | Running |
+| SQLite storage adapter | Verified end-to-end |
+| PostgreSQL storage adapter | Code exists, not CI-verified |
+| Query Language v0 (parser + executor) | 23 unit tests passing |
+| Import pipeline (CSV/JSON, mapping, transforms, validation) | 7 e2e tests passing |
+| Studio (Astro) — dashboard, import wizard, entity browser | Builds, talks to Core over HTTP |
+
+### What is not built yet
+
+- Real permission system (only a single bearer token today)
+- Relation support in queries
+- Plugin system
+- AI integration
+- Phase 3 features
+
+### Running locally
+
+**Core (HTTP API):**
+
+```bash
+cd packages/core
+bun install
+bun run serve          # starts on http://localhost:3000
+```
+
+**Studio:**
+
+```bash
+cd packages/studio
+bun install
+bun run dev            # starts on http://localhost:4321
+```
+
+Set `AURII_API_URL=http://localhost:3000` in Studio's environment so it points to Core.
+
+**Environment variables for Core:**
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `PORT` | `3000` | HTTP port |
+| `AURII_STORAGE` | `sqlite` | `sqlite` or `postgres` |
+| `AURII_DB_PATH` | `aurii.db` | SQLite file path |
+| `DATABASE_URL` | — | PostgreSQL connection string |
+| `AURII_API_TOKEN` | — | Bearer token (unset = open) |
+
+### Running tests
+
+```bash
+cd packages/core
+bun run test        # 136 unit + e2e tests
+bun run typecheck   # TypeScript check (0 errors)
+bun run lint        # Biome lint
+```
+
+### Specification
+
+The full design documents are in the root of this repository:
+
+- `Phase1.md`, `Phase2.md` — implementation phases
+- `Architecture.md`, `API.md`, `Schema Language.md`, `Query Language.md`
+- `adr/` — Architecture Decision Records
+
+The specification is the source of truth. Code implements the specification.
