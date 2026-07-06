@@ -382,9 +382,11 @@ describe("3. Import analysis — schema suggestion from real data", () => {
 		const salaryMin = analysis.suggestedSchema.fields.find(
 			(f) => f.name === "salaryMin",
 		);
+		expect(salaryMin).toBeDefined();
 		// Some rows have empty salary → inferType sees non-numeric values → string
 		// All-numeric rows → number. We document what the analyzer actually decides.
-		expect(["number", "string"]).toContain(salaryMin?.type);
+		const inferredType = salaryMin!.type;
+		expect(["number", "string"]).toContain(inferredType);
 	});
 
 	it("suggests a schema id derived from filename", async () => {
