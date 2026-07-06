@@ -8,6 +8,7 @@
     "exactOptionalPropertyTypes": true,
     "lib": ["ESNext"],
     "types": ["bun-types"],
+    "skipLibCheck": true,
     "paths": {
       "@aurii/core": ["./src/index.ts"]
     }
