@@ -1,0 +1,102 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Query Playground" active="query">
+  <h1>Query Playground</h1>
+  <p class="subtitle">Run Query Language v1 queries and inspect execution plans.</p>
+
+  <div class="card" style="margin-bottom: 16px;">
+    <label for="query-input" class="muted" style="font-size: 11px;">QUERY</label>
+    <textarea id="query-input" rows="4" style="width: 100%; font-family: monospace; margin-top: 8px;"
+      >from municipality where countyId == "03" or countyId == "11" order by name asc limit 10</textarea>
+    <div class="flex" style="margin-top: 12px;">
+      <button class="btn" id="run-query">Run</button>
+      <button class="btn secondary" id="explain-query">Explain</button>
+      <button class="btn secondary" id="count-query">Count</button>
+    </div>
+  </div>
+
+  <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 16px;">
+    <div class="card" id="results">
+      <h3>Results</h3>
+      <p class="muted">Run a query to see results.</p>
+    </div>
+    <div class="card" id="plan">
+      <h3>Execution Plan</h3>
+      <p class="muted">Click Explain to see how Core executes the query.</p>
+    </div>
+  </div>
+
+  <script>
+    import { getClient } from "../lib/client";
+    import { getDataset } from "../lib/api";
+
+    const ds = getDataset();
+    const client = getClient();
+    const queryInput = document.getElementById("query-input") as HTMLTextAreaElement;
+    const results = document.getElementById("results")!;
+    const planEl = document.getElementById("plan")!;
+
+    document.getElementById("run-query")!.addEventListener("click", run);
+    document.getElementById("explain-query")!.addEventListener("click", explain);
+    document.getElementById("count-query")!.addEventListener("click", () => {
+      const schema = prompt("Schema to count:", "municipality");
+      if (schema) {
+        queryInput.value = `count ${schema}`;
+        run();
+      }
+    });
+
+    async function run() {
+      const q = queryInput.value.trim();
+      if (!q) return;
+      try {
+        const res = await client.query.run(q, ds);
+        if (res.aggregate) {
+          results.innerHTML = `<h3>Results</h3><p><strong>${res.aggregate.fn.toUpperCase()}:</strong> ${res.aggregate.value}</p>`;
+          return;
+        }
+        renderEntities(res.entities, res.count);
+      } catch (e) {
+        results.innerHTML = `<div class="error-box">${String(e)}</div>`;
+      }
+    }
+
+    async function explain() {
+      const q = queryInput.value.trim();
+      if (!q) return;
+      try {
+        const exp = await client.query.explain(q);
+        planEl.innerHTML = `<h3>Execution Plan</h3>
+          <p class="muted">Schemas: ${exp.estimatedSchemas.join(", ")}</p>
+          <ol>${exp.steps.map((s) => `<li>${s}</li>`).join("")}</ol>
+          <pre class="json">${JSON.stringify(exp.plan, null, 2)}</pre>`;
+      } catch (e) {
+        planEl.innerHTML = `<div class="error-box">${String(e)}</div>`;
+      }
+    }
+
+    function renderEntities(entities: Array<{ id: string; data: Record<string, unknown> }>, count: number) {
+      if (entities.length === 0) {
+        results.innerHTML = `<h3>Results</h3><p class="muted">No entities (${count} total).</p>`;
+        return;
+      }
+      const keys = Object.keys(entities[0]!.data).slice(0, 6);
+      const header = keys.map((k) => `<th>${k}</th>`).join("");
+      const rows = entities.map((e) => {
+        const cells = keys.map((k) => {
+          let v = e.data[k];
+          let s = v === null || v === undefined ? "—" : String(v);
+          if (s.length > 40) s = s.slice(0, 40) + "…";
+          const isRef = k.endsWith("Id") || k.includes(".");
+          const cls = isRef ? ' class="ref-cell"' : "";
+          return `<td${cls}>${s}</td>`;
+        }).join("");
+        return `<tr>${cells}</tr>`;
+      }).join("");
+      results.innerHTML = `<h3>Results (${count})</h3>
+        <table><thead><tr>${header}</tr></thead><tbody>${rows}</tbody></table>`;
+    }
+  </script>
+</Layout>

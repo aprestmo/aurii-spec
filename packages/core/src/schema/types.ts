@@ -14,8 +14,15 @@ export interface FieldDefinition {
 	default?: unknown;
 	label?: string;
 	description?: string;
-	/** For reference fields: the id of the referenced schema */
+	/**
+	 * Target schema id for reference fields.
+	 * `to` is the canonical name; `schema` is accepted for backward compatibility.
+	 */
+	to?: string;
+	/** @deprecated Use `to` instead */
 	schema?: string;
+	/** When true, the field stores an array of reference IDs (one-to-many). */
+	multiple?: boolean;
 }
 
 export interface SchemaDefinition {
@@ -40,4 +47,14 @@ export interface StoredSchema {
 export interface ValidationResult {
 	valid: boolean;
 	errors: string[];
+}
+
+/** Resolve the target schema id for a reference field. */
+export function referenceTarget(field: FieldDefinition): string | undefined {
+	return field.to ?? field.schema;
+}
+
+/** Whether a field is a reference (single or multiple). */
+export function isReferenceField(field: FieldDefinition): boolean {
+	return field.type === "reference";
 }

@@ -1,38 +1,46 @@
 /**
- * Query Language v0 parser.
+ * Query Language v1 parser.
  *
  * Syntax:
- *   from <schema>
+ *   from <schema> [join <schema> on <alias>.<field> = <alias>.<field>]
  *   [select <field>[, <field>]*]
- *   [where <condition> [and <condition>]*]
+ *   [where <expr>]
  *   [order by <field> [asc | desc]]
- *   [limit <n>]
- *   [offset <n>]
+ *   [limit <n>] [offset <n>]
  *
- * Condition:
- *   <field> <op> <value>
- *   op: == != > < >= <= contains
+ *   count <schema> [where <expr>]
+ *
+ * Where expressions support AND, OR, NOT, IN, and EXISTS.
  */
 
-export type Operator = "==" | "!=" | ">" | "<" | ">=" | "<=" | "contains";
-export type ScalarValue = string | number | boolean | null;
+import type {
+	AggregateQuery,
+	Condition,
+	JoinClause,
+	QueryAST,
+	ScalarValue,
+	SelectQuery,
+	WhereExpr,
+} from "./ast";
 
-export interface Condition {
-	field: string;
-	op: Operator;
-	value: ScalarValue;
-}
+export type {
+	AggregateQuery,
+	Condition,
+	JoinClause,
+	QueryAST,
+	Operator,
+	OrderBy,
+	ScalarValue,
+	SelectQuery,
+	WhereExpr,
+} from "./ast";
 
-export interface OrderBy {
-	field: string;
-	direction: "asc" | "desc";
-}
-
+/** @deprecated Use QueryAST (SelectQuery) instead. Kept for backward compatibility. */
 export interface ParsedQuery {
 	from: string;
 	select?: string[];
 	where?: Condition[];
-	orderBy?: OrderBy;
+	orderBy?: { field: string; direction: "asc" | "desc" };
 	limit?: number;
 	offset?: number;
 }
@@ -42,12 +50,15 @@ export interface ParsedQuery {
 type TokenKind =
 	| "keyword"
 	| "ident"
+	| "qualified"
 	| "string"
 	| "number"
 	| "boolean"
 	| "null"
 	| "op"
 	| "comma"
+	| "lparen"
+	| "rparen"
 	| "eof";
 
 interface Token {
@@ -61,12 +72,19 @@ const KEYWORDS = new Set([
 	"select",
 	"where",
 	"and",
+	"or",
+	"not",
+	"in",
+	"exists",
 	"order",
 	"by",
 	"limit",
 	"offset",
 	"asc",
 	"desc",
+	"join",
+	"on",
+	"count",
 ]);
 
 function tokenize(input: string): Token[] {
@@ -79,7 +97,6 @@ function tokenize(input: string): Token[] {
 			continue;
 		}
 
-		// Two-char operators first
 		const two = input.slice(i, i + 2);
 		if (two === "==" || two === "!=" || two === ">=" || two === "<=") {
 			tokens.push({ kind: "op", value: two, raw: two });
@@ -89,19 +106,27 @@ function tokenize(input: string): Token[] {
 
 		const ch = input[i]!;
 
-		if (ch === ">" || ch === "<") {
+		if (ch === "(") {
+			tokens.push({ kind: "lparen", value: "(", raw: "(" });
+			i++;
+			continue;
+		}
+		if (ch === ")") {
+			tokens.push({ kind: "rparen", value: ")", raw: ")" });
+			i++;
+			continue;
+		}
+		if (ch === ">" || ch === "<" || ch === "=") {
 			tokens.push({ kind: "op", value: ch, raw: ch });
 			i++;
 			continue;
 		}
-
 		if (ch === ",") {
 			tokens.push({ kind: "comma", value: ",", raw: "," });
 			i++;
 			continue;
 		}
 
-		// Quoted string
 		if (ch === '"' || ch === "'") {
 			const quote = ch;
 			let str = "";
@@ -115,12 +140,11 @@ function tokenize(input: string): Token[] {
 				}
 				i++;
 			}
-			i++; // closing quote
+			i++;
 			tokens.push({ kind: "string", value: str, raw: `"${str}"` });
 			continue;
 		}
 
-		// Number (including negative)
 		if (/[0-9]/.test(ch) || (ch === "-" && /[0-9]/.test(input[i + 1] ?? ""))) {
 			let num = ch === "-" ? (i++, "-") : "";
 			while (i < input.length && /[0-9.]/.test(input[i]!)) num += input[i++];
@@ -128,7 +152,6 @@ function tokenize(input: string): Token[] {
 			continue;
 		}
 
-		// Identifier / keyword / boolean / null / contains operator
 		if (/[a-zA-Z_]/.test(ch)) {
 			let word = "";
 			while (i < input.length && /[a-zA-Z0-9_\-.]/.test(input[i]!))
@@ -167,7 +190,7 @@ function tokenize(input: string): Token[] {
 	return tokens;
 }
 
-// ── Recursive-descent parser ─────────────────────────────────────────────────
+// ── Parser ────────────────────────────────────────────────────────────────────
 
 class Parser {
 	private tokens: Token[];
@@ -205,10 +228,52 @@ class Parser {
 		return true;
 	}
 
-	parse(): ParsedQuery {
+	parse(): QueryAST {
+		if (this.match("keyword", "count")) {
+			return this.parseAggregate();
+		}
+		return this.parseSelect();
+	}
+
+	private parseAggregate(): AggregateQuery {
+		this.expect("keyword", "count");
+		const from = this.expect("ident").value as string;
+		const query: AggregateQuery = { kind: "aggregate", fn: "count", from };
+
+		while (!this.match("eof")) {
+			if (this.match("keyword", "where")) {
+				this.advance();
+				query.where = this.parseWhereExpr();
+			} else {
+				throw new Error(`Unexpected token "${this.peek().raw}" in aggregate query`);
+			}
+		}
+		return query;
+	}
+
+	private parseSelect(): SelectQuery {
 		this.expect("keyword", "from");
 		const from = this.expect("ident").value as string;
-		const query: ParsedQuery = { from };
+		const query: SelectQuery = { kind: "select", from, fromAlias: from };
+
+		if (this.match("keyword", "join")) {
+			this.advance();
+			const joinSchema = this.expect("ident").value as string;
+			this.expect("keyword", "on");
+			const left = this.parseQualifiedField();
+			this.expect("op", "=");
+			const right = this.parseQualifiedField();
+			query.join = {
+				schema: joinSchema,
+				alias: joinSchema,
+				on: {
+					leftAlias: left.alias,
+					leftField: left.field,
+					rightAlias: right.alias,
+					rightField: right.field,
+				},
+			};
+		}
 
 		while (!this.match("eof")) {
 			if (this.match("keyword", "select")) {
@@ -216,7 +281,7 @@ class Parser {
 				query.select = this.parseFieldList();
 			} else if (this.match("keyword", "where")) {
 				this.advance();
-				query.where = this.parseConditions();
+				query.where = this.parseWhereExpr();
 			} else if (this.match("keyword", "order")) {
 				this.advance();
 				this.expect("keyword", "by");
@@ -233,14 +298,20 @@ class Parser {
 				this.advance();
 				query.offset = this.expect("number").value as number;
 			} else {
-				const tok = this.peek();
-				throw new Error(
-					`Unexpected token "${tok.raw}" at position ${this.pos}`,
-				);
+				throw new Error(`Unexpected token "${this.peek().raw}"`);
 			}
 		}
 
 		return query;
+	}
+
+	private parseQualifiedField(): { alias: string; field: string } {
+		const raw = this.expect("ident").value as string;
+		const dot = raw.indexOf(".");
+		if (dot > 0) {
+			return { alias: raw.slice(0, dot), field: raw.slice(dot + 1) };
+		}
+		return { alias: raw, field: raw };
 	}
 
 	private parseFieldList(): string[] {
@@ -252,34 +323,125 @@ class Parser {
 		return fields;
 	}
 
-	private parseConditions(): Condition[] {
-		const conditions: Condition[] = [this.parseCondition()];
+	private parseWhereExpr(): WhereExpr {
+		return this.parseOrExpr();
+	}
+
+	private parseOrExpr(): WhereExpr {
+		const exprs = [this.parseAndExpr()];
+		while (this.match("keyword", "or")) {
+			this.advance();
+			exprs.push(this.parseAndExpr());
+		}
+		if (exprs.length === 1) return exprs[0]!;
+		return { type: "or", exprs };
+	}
+
+	private parseAndExpr(): WhereExpr {
+		const exprs = [this.parseNotExpr()];
 		while (this.match("keyword", "and")) {
 			this.advance();
-			conditions.push(this.parseCondition());
+			exprs.push(this.parseNotExpr());
 		}
-		return conditions;
+		if (exprs.length === 1) return exprs[0]!;
+		return { type: "and", exprs };
+	}
+
+	private parseNotExpr(): WhereExpr {
+		if (this.match("keyword", "not")) {
+			this.advance();
+			if (this.match("lparen")) {
+				this.advance();
+				const inner = this.parseWhereExpr();
+				this.expect("rparen");
+				return { type: "not", expr: inner };
+			}
+			return { type: "not", expr: this.parsePrimaryExpr() };
+		}
+		return this.parsePrimaryExpr();
+	}
+
+	private parsePrimaryExpr(): WhereExpr {
+		if (this.match("lparen")) {
+			this.advance();
+			const expr = this.parseWhereExpr();
+			this.expect("rparen");
+			return expr;
+		}
+		return { type: "condition", condition: this.parseCondition() };
 	}
 
 	private parseCondition(): Condition {
 		const field = this.expect("ident").value as string;
-		const op = this.expect("op").value as Operator;
-		const tok = this.peek();
 
-		if (!["string", "number", "boolean", "null"].includes(tok.kind)) {
-			throw new Error(
-				`Expected a value after operator but got ${tok.kind} ("${tok.raw}")`,
-			);
+		if (this.match("keyword", "exists")) {
+			this.advance();
+			return { field, op: "exists" };
 		}
 
-		const value = this.advance().value as ScalarValue;
+		if (this.match("keyword", "in")) {
+			this.advance();
+			this.expect("lparen");
+			const values: ScalarValue[] = [this.parseValue()];
+			while (this.match("comma")) {
+				this.advance();
+				values.push(this.parseValue());
+			}
+			this.expect("rparen");
+			return { field, op: "in", value: values };
+		}
+
+		const op = this.expect("op").value as Condition["op"];
+		const value = this.parseValue();
 		return { field, op, value };
+	}
+
+	private parseValue(): ScalarValue {
+		const tok = this.peek();
+		if (!["string", "number", "boolean", "null"].includes(tok.kind)) {
+			throw new Error(
+				`Expected a value but got ${tok.kind} ("${tok.raw}")`,
+			);
+		}
+		return this.advance().value as ScalarValue;
 	}
 }
 
 // ── Public API ───────────────────────────────────────────────────────────────
 
-export function parseQuery(input: string): ParsedQuery {
+export function parseQuery(input: string): QueryAST {
 	const tokens = tokenize(input.trim());
 	return new Parser(tokens).parse();
+}
+
+/** Convert v1 AST to legacy ParsedQuery (single-entity, flat AND conditions only). */
+export function toLegacyParsedQuery(ast: QueryAST): ParsedQuery {
+	if (ast.kind === "aggregate") {
+		throw new Error("Aggregate queries cannot be converted to legacy ParsedQuery");
+	}
+	if (ast.join) {
+		throw new Error("Join queries cannot be converted to legacy ParsedQuery");
+	}
+
+	const flatWhere: Condition[] = [];
+	if (ast.where) flattenWhere(ast.where, flatWhere);
+
+	return {
+		from: ast.from,
+		...(ast.select ? { select: ast.select } : {}),
+		...(flatWhere.length > 0 ? { where: flatWhere } : {}),
+		...(ast.orderBy ? { orderBy: ast.orderBy } : {}),
+		...(ast.limit !== undefined ? { limit: ast.limit } : {}),
+		...(ast.offset !== undefined ? { offset: ast.offset } : {}),
+	};
+}
+
+function flattenWhere(expr: WhereExpr, out: Condition[]): void {
+	if (expr.type === "condition") {
+		out.push(expr.condition);
+	} else if (expr.type === "and") {
+		for (const e of expr.exprs) flattenWhere(e, out);
+	} else {
+		throw new Error("Legacy ParsedQuery only supports flat AND conditions");
+	}
 }

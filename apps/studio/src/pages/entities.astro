@@ -91,25 +91,53 @@ import Layout from "../layouts/Layout.astro";
         return;
       }
       const keys = Object.keys(entities[0]!.data).slice(0, 5);
-      const header = keys.map((k) => `<th>${k}</th>`).join("");
+      const header = keys.map((k) => `<th>${k}</th>`).join("") + "<th></th>";
       const rows = entities.map((e) => {
         const cells = keys.map((k) => {
           let v = e.data[k];
           let s = v === null || v === undefined ? "—" : String(v);
+          const isRef = k.endsWith("Id");
+          if (isRef && typeof v === "string") {
+            return `<td><a href="#" class="ref-link" data-ref="${v}" data-field="${k}">${s}</a></td>`;
+          }
           if (s.length > 60) s = s.slice(0, 60) + "…";
           return `<td>${s}</td>`;
         }).join("");
-        return `<tr data-id="${e.id}" style="cursor:pointer">${cells}</tr>
-                <tr class="hidden" data-detail="${e.id}"><td colspan="${keys.length}">
+        return `<tr data-id="${e.id}" style="cursor:pointer">${cells}<td class="muted">▸</td></tr>
+                <tr class="hidden" data-detail="${e.id}"><td colspan="${keys.length + 1}">
                   <pre class="json">${JSON.stringify(e, null, 2)}</pre>
                 </td></tr>`;
       }).join("");
       results.innerHTML = `<table><thead><tr>${header}</tr></thead><tbody>${rows}</tbody></table>`;
 
       results.querySelectorAll("tr[data-id]").forEach((tr) =>
-        tr.addEventListener("click", () => {
+        tr.addEventListener("click", (ev) => {
+          if ((ev.target as HTMLElement).closest(".ref-link")) return;
           const id = (tr as HTMLElement).dataset.id;
           results.querySelector(`tr[data-detail="${id}"]`)!.classList.toggle("hidden");
+        })
+      );
+
+      results.querySelectorAll(".ref-link").forEach((a) =>
+        a.addEventListener("click", async (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          const refId = (a as HTMLElement).dataset.ref!;
+          const field = (a as HTMLElement).dataset.field!;
+          let targetSchema = field.replace(/Id$/, "");
+          if (field === "countyId") targetSchema = "county";
+          if (field === "municipalityId") targetSchema = "municipality";
+          try {
+            const res = await client.query.run(
+              `from ${targetSchema} where id == "${refId}"`,
+              ds,
+            );
+            if (res.entities[0]) {
+              alert(JSON.stringify(res.entities[0].data, null, 2));
+            }
+          } catch (e) {
+            alert(String(e));
+          }
         })
       );
     }

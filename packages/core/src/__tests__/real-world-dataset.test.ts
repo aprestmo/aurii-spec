@@ -471,14 +471,14 @@ describe("4. Query language — capabilities and gaps with real data", () => {
 		expect(result.entities.every((e) => e.data["remote"] === true)).toBe(true);
 	});
 
-	it("LIMITATION: OR conditions are not supported", () => {
-		// There is no OR support. Only AND clauses.
-		// This means: cannot query "where category == 'Engineering' OR category == 'Data'"
-		expect(() =>
-			parseQuery(
-				'from job-posting where category == "Engineering" or category == "Data"',
-			),
-		).toThrow();
+	it("OR conditions are supported in v1", () => {
+		const ast = parseQuery(
+			'from job-posting where category == "Engineering" or category == "Data"',
+		);
+		expect(ast.kind).toBe("select");
+		if (ast.kind === "select") {
+			expect(ast.where?.type).toBe("or");
+		}
 	});
 
 	it("'where deadline == null' returns entities with no deadline field (IS NULL fixed)", async () => {
@@ -502,22 +502,19 @@ describe("4. Query language — capabilities and gaps with real data", () => {
 		).toThrow();
 	});
 
-	it("LIMITATION: aggregate queries (COUNT, SUM, AVG) not supported", () => {
-		// Cannot ask: "what is the average salaryMin for Engineering jobs?"
-		// The query language has no aggregate functions.
-		expect(() =>
-			parseQuery(
-				"from job-posting select count(*) where category == \"Engineering\"",
-			),
-		).toThrow();
+	it("aggregate COUNT is supported in v1", async () => {
+		const result = await executeQuery(
+			parseQuery("count job-posting"),
+			DEFAULT_DATASET,
+		);
+		expect(result.aggregate?.value).toBeGreaterThan(0);
 	});
 
-	it("LIMITATION: schema join / relation queries not supported", () => {
-		// Cannot join job-posting with a separate company schema.
-		// All data must be denormalized into a single entity.
-		expect(() =>
-			parseQuery("from job-posting join company on company == company.name"),
-		).toThrow();
+	it("join queries parse and execute when schemas exist", () => {
+		const ast = parseQuery(
+			"from job-posting join company on job-posting.company = company.name",
+		);
+		expect(ast.kind).toBe("select");
 	});
 
 	it("limit and offset work correctly for pagination", async () => {

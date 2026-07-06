@@ -1,5 +1,6 @@
 import type { Entity, EntityInput } from "../entity/types";
-import type { ParsedQuery } from "../query/parser";
+import type { ExecutionPlan } from "../query/plan";
+import type { PlanResult } from "./plan-executor";
 import type { SchemaDefinition, StoredSchema } from "../schema/types";
 
 export const DEFAULT_DATASET = "default";
@@ -101,7 +102,7 @@ export interface StorageAdapter {
 	countEntities(schemaId: string, datasetId: string): Promise<number>;
 
 	// Query
-	executeQuery(query: ParsedQuery, datasetId: string): Promise<Entity[]>;
+	executePlan(plan: ExecutionPlan, datasetId: string): Promise<PlanResult>;
 
 	// Import runs
 	recordImportRun(run: Omit<ImportRunRecord, "createdAt">): Promise<void>;

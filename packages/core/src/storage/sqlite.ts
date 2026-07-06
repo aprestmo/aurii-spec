@@ -2,8 +2,16 @@ import type { SQLQueryBindings } from "bun:sqlite";
 import { Database } from "bun:sqlite";
 import { join } from "path";
 import type { Entity, EntityInput, EntityState } from "../entity/types";
-import type { Condition, ParsedQuery } from "../query/parser";
+import type { WhereExpr } from "../query/ast";
+import type { ExecutionPlan, ScanStep } from "../query/plan";
 import type { SchemaDefinition, StoredSchema } from "../schema/types";
+import {
+	evaluateWhere,
+	executePlan as runPlan,
+	type PlanExecutorContext,
+	type PlanResult,
+	whereExprToSqlClauses,
+} from "./plan-executor";
 import type {
 	Dataset,
 	DatasetInput,
@@ -62,40 +70,43 @@ function rowToSchema(row: RawSchemaRow): StoredSchema {
 	};
 }
 
-function conditionToSql(
-	condition: Condition,
-	params: SQLQueryBindings[],
-): string {
-	const path = `json_extract(data, '$.${condition.field}')`;
+function buildScanSql(
+	step: ScanStep,
+	datasetId: string,
+): { sql: string; params: SQLQueryBindings[] } {
+	const params: SQLQueryBindings[] = [datasetId, step.schemaId];
+	let sql =
+		"SELECT id, dataset_id, schema_id, data, state, created_at, updated_at " +
+		"FROM aurii_entities WHERE dataset_id = ? AND schema_id = ?";
 
-	if (condition.op === "contains") {
-		params.push(`%${condition.value}%`);
-		return `${path} LIKE ?`;
+	if (step.where) {
+		const bind = (v: unknown) => {
+			params.push(v as SQLQueryBindings);
+			return "?";
+		};
+		const clauses = whereExprToSqlClauses(
+			step.where,
+			(field) => `json_extract(data, '$.${field}')`,
+			bind,
+		);
+		if (clauses.length > 0) sql += " AND " + clauses.join(" AND ");
 	}
 
-	// NULL comparisons must use IS NULL / IS NOT NULL; binding null and using = always
-	// evaluates to UNKNOWN in SQL, so `where field == null` would never match anything.
-	if (condition.value === null) {
-		return condition.op === "==" ? `${path} IS NULL` : `${path} IS NOT NULL`;
+	if (step.orderBy) {
+		const dir = step.orderBy.direction.toUpperCase();
+		sql += ` ORDER BY json_extract(data, '$.${step.orderBy.field}') ${dir}`;
 	}
 
-	const value =
-		typeof condition.value === "boolean"
-			? condition.value
-				? 1
-				: 0
-			: condition.value;
-	params.push(value);
+	if (step.limit !== undefined) {
+		sql += " LIMIT ?";
+		params.push(step.limit);
+	}
+	if (step.offset !== undefined) {
+		sql += " OFFSET ?";
+		params.push(step.offset);
+	}
 
-	const ops: Record<string, string> = {
-		"==": "=",
-		"!=": "!=",
-		">": ">",
-		"<": "<",
-		">=": ">=",
-		"<=": "<=",
-	};
-	return `${path} ${ops[condition.op]} ?`;
+	return { sql, params };
 }
 
 export class SqliteAdapter implements StorageAdapter {
@@ -414,36 +425,47 @@ export class SqliteAdapter implements StorageAdapter {
 
 	// ── Query ──────────────────────────────────────────────────────────────────
 
-	async executeQuery(query: ParsedQuery, datasetId: string): Promise<Entity[]> {
-		const params: SQLQueryBindings[] = [datasetId, query.from];
-		let sql =
-			"SELECT id, dataset_id, schema_id, data, state, created_at, updated_at " +
-			"FROM aurii_entities WHERE dataset_id = ? AND schema_id = ?";
+	async executePlan(
+		plan: ExecutionPlan,
+		datasetId: string,
+	): Promise<PlanResult> {
+		const ctx: PlanExecutorContext = {
+			datasetId,
+			scan: async (step) => this.scanStep(step, datasetId),
+			count: async (schemaId, where) => {
+				const step: ScanStep = where
+					? { kind: "scan", schemaId, alias: schemaId, where }
+					: { kind: "scan", schemaId, alias: schemaId };
+				const entities = await this.scanStep(step, datasetId);
+				return entities.length;
+			},
+			getSchemaFields: async (schemaId) => {
+				const s = await this.getSchema(schemaId, datasetId);
+				return s?.fields ?? [];
+			},
+			findByField: async (schemaId, field, value) => {
+				const entities = await this.listEntities(schemaId, datasetId, 10000);
+				return entities.find((e) => e.data[field] === value) ?? null;
+			},
+		};
+		return runPlan(plan, ctx);
+	}
 
-		if (query.where && query.where.length > 0) {
-			const clauses = query.where.map((c) => conditionToSql(c, params));
-			sql += " AND " + clauses.join(" AND ");
-		}
-
-		if (query.orderBy) {
-			const dir = query.orderBy.direction.toUpperCase();
-			sql += ` ORDER BY json_extract(data, '$.${query.orderBy.field}') ${dir}`;
-		}
-
-		if (query.limit !== undefined) {
-			sql += " LIMIT ?";
-			params.push(query.limit);
-		}
-		if (query.offset !== undefined) {
-			sql += " OFFSET ?";
-			params.push(query.offset);
-		}
-
+	private async scanStep(
+		step: ScanStep,
+		datasetId: string,
+	): Promise<Entity[]> {
+		const { sql, params } = buildScanSql(step, datasetId);
 		const rows = this.db.prepare(sql).all(...params) as RawEntityRow[];
 		let entities = rows.map(rowToEntity);
 
-		if (query.select && query.select.length > 0) {
-			const fields = query.select;
+		// Post-filter for NOT, EXISTS, and complex OR when SQL can't express them
+		if (step.where) {
+			entities = entities.filter((e) => evaluateWhere(step.where!, e.data));
+		}
+
+		if (step.select && step.select.length > 0) {
+			const fields = step.select;
 			entities = entities.map((e) => ({
 				...e,
 				data: Object.fromEntries(

@@ -37,7 +37,13 @@ export interface FieldDefinition {
 	type: FieldType;
 	required?: boolean;
 	default?: unknown;
+	/** Target schema id for reference fields (`to` is canonical). */
+	to?: string;
+	/** @deprecated Use `to` instead */
 	reference?: string;
+	/** @deprecated Use `to` instead */
+	schema?: string;
+	multiple?: boolean;
 	description?: string;
 }
 
@@ -143,8 +149,21 @@ export interface AnalyzeResponse extends AnalysisResult {
 
 export interface QueryResult {
 	entities: Entity[];
-	total: number;
-	query: string;
+	count: number;
+	query: unknown;
+	aggregate?: { fn: string; value: number };
+	plan?: unknown;
+	explain?: {
+		plan: unknown;
+		steps: string[];
+		estimatedSchemas: string[];
+	};
+}
+
+export interface PlanExplanation {
+	plan: unknown;
+	steps: string[];
+	estimatedSchemas: string[];
 }
 
 // ── Stats ─────────────────────────────────────────────────────────────────────
