@@ -1,0 +1,166 @@
+---
+import DemoLayout from "@/layouts/DemoLayout.astro";
+import { Input } from "@/components/starwind/input";
+---
+
+<DemoLayout title="Municipalities">
+  <div class="flex flex-col gap-6">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <h1 class="text-2xl font-semibold tracking-tight">Municipalities</h1>
+        <p class="mt-1 text-sm text-muted-foreground">
+          Browse municipalities and see how Aurii links postal codes, schools, and kindergartens.
+        </p>
+      </div>
+      <div class="w-full sm:max-w-md">
+        <label class="sr-only" for="q">Search municipalities</label>
+        <Input id="q" placeholder="Search by name or number…" />
+      </div>
+    </div>
+
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" id="municipality-cards">
+      <div class="rounded-xl border bg-card p-6 text-sm text-muted-foreground">Loading municipalities…</div>
+    </div>
+  </div>
+
+  <script>
+    import { getClient } from "../../../lib/client";
+    import { getDataset } from "../../../lib/api";
+
+    const client = getClient();
+    const dataset = getDataset();
+
+    const container = document.getElementById("municipality-cards");
+    const input = document.getElementById("q") as HTMLInputElement | null;
+
+    type SchemaLite = { id: string; name: string };
+    type EntityLite = { id: string; schemaId: string; data: Record<string, unknown> };
+
+    function pickSchemaId(schemas: SchemaLite[], patterns: string[]): string | null {
+      const lower = schemas.map((s) => ({ ...s, _k: `${s.id} ${s.name}`.toLowerCase() }));
+      for (const p of patterns) {
+        const found = lower.find((s) => s._k.includes(p));
+        if (found) return found.id;
+      }
+      return null;
+    }
+
+    function getValue(
+      data: Record<string, unknown> | undefined,
+      keys: string[]
+    ): unknown | null {
+      for (const k of keys) {
+        const v = data?.[k];
+        if (v !== undefined && v !== null && v !== "") return v;
+      }
+      return null;
+    }
+
+    function asText(v: unknown): string {
+      if (v === null || v === undefined) return "—";
+      if (typeof v === "string" || typeof v === "number" || typeof v === "boolean") return String(v);
+      return JSON.stringify(v);
+    }
+
+    function escapeHtml(s: unknown): string {
+      return String(s).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
+    }
+
+    let all: EntityLite[] = [];
+
+    function render(list: EntityLite[]) {
+      if (!container) return;
+      if (list.length === 0) {
+        container.innerHTML = `<div class="rounded-xl border bg-card p-6 text-sm text-muted-foreground">No matches.</div>`;
+        return;
+      }
+      container.innerHTML = list
+        .map((m) => {
+          const name = asText(getValue(m.data, ["name", "municipalityName", "kommunenavn"]));
+          const number = asText(getValue(m.data, ["municipalityNumber", "number", "kommunenummer"]));
+          const county = asText(getValue(m.data, ["countyName", "county", "fylke"]));
+          const population = asText(getValue(m.data, ["population", "innbyggere"]));
+          const area = asText(getValue(m.data, ["area", "areaKm2", "areal"]));
+
+          // Optional counts if present
+          const schools = asText(getValue(m.data, ["schoolCount", "schools"]));
+          const kindergartens = asText(getValue(m.data, ["kindergartenCount", "kindergartens"]));
+          const postalCodes = asText(getValue(m.data, ["postalCodeCount", "postalCodes"]));
+
+          return `
+            <a href="/demo/municipalities/${encodeURIComponent(m.id)}" class="group rounded-xl border bg-card p-6 transition hover:bg-accent/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-outline">
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <div class="text-base font-semibold tracking-tight">${escapeHtml(name)}</div>
+                  <div class="mt-1 text-xs text-muted-foreground">Municipality no. <span class="font-mono">${escapeHtml(number)}</span></div>
+                </div>
+                <div class="text-xs text-muted-foreground font-mono">${escapeHtml(m.schemaId)}</div>
+              </div>
+              <div class="mt-4 grid grid-cols-2 gap-3 text-sm">
+                <div>
+                  <div class="text-xs text-muted-foreground">County</div>
+                  <div class="mt-0.5 font-medium">${escapeHtml(county)}</div>
+                </div>
+                <div>
+                  <div class="text-xs text-muted-foreground">Population</div>
+                  <div class="mt-0.5 font-medium">${escapeHtml(population)}</div>
+                </div>
+                <div>
+                  <div class="text-xs text-muted-foreground">Area</div>
+                  <div class="mt-0.5 font-medium">${escapeHtml(area)}</div>
+                </div>
+                <div>
+                  <div class="text-xs text-muted-foreground">Postal codes</div>
+                  <div class="mt-0.5 font-medium">${escapeHtml(postalCodes)}</div>
+                </div>
+                <div>
+                  <div class="text-xs text-muted-foreground">Schools</div>
+                  <div class="mt-0.5 font-medium">${escapeHtml(schools)}</div>
+                </div>
+                <div>
+                  <div class="text-xs text-muted-foreground">Kindergartens</div>
+                  <div class="mt-0.5 font-medium">${escapeHtml(kindergartens)}</div>
+                </div>
+              </div>
+              <div class="mt-4 text-sm font-medium text-primary group-hover:underline">Open municipality →</div>
+            </a>
+          `;
+        })
+        .join("");
+    }
+
+    async function load(): Promise<void> {
+      if (!container) return;
+      try {
+        const schemas: SchemaLite[] = await client.schemas.list(dataset);
+        const municipalitySchemaId = pickSchemaId(schemas, ["municipality", "kommune"]);
+        if (!municipalitySchemaId) {
+          container.innerHTML = `<div class="rounded-xl border bg-card p-6 text-sm text-muted-foreground">No municipality schema found in this dataset.</div>`;
+          return;
+        }
+        const result = await client.query.run(`from ${municipalitySchemaId} order by name asc`, dataset);
+        all = result.entities.map((e) => ({ id: e.id, schemaId: e.schemaId, data: e.data }));
+        render(all);
+      } catch (e) {
+        container.innerHTML = `<div class="rounded-xl border bg-card p-6 text-sm text-muted-foreground">Failed to load: ${escapeHtml(String(e))}</div>`;
+      }
+    }
+
+    load();
+
+    if (input) {
+      input.addEventListener("input", () => {
+        const q = input.value.trim().toLowerCase();
+        if (!q) return render(all);
+        render(
+          all.filter((m) => {
+            const name = String(getValue(m.data, ["name", "municipalityName", "kommunenavn"]) ?? "").toLowerCase();
+            const num = String(getValue(m.data, ["municipalityNumber", "number", "kommunenummer"]) ?? "").toLowerCase();
+            return name.includes(q) || num.includes(q) || m.id.toLowerCase().includes(q);
+          })
+        );
+      });
+    }
+  </script>
+</DemoLayout>
+
