@@ -8,7 +8,14 @@
     "validFrom": 2024,
     "status": "current",
     "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
-    "wikipediaUrl": "https://no.wikipedia.org/wiki/Akershus"
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Akershus",
+    "coatOfArms": {
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Akershus_våpen.svg",
+      "localPath": "/assets/heraldry/counties/county-32-akershus.svg",
+      "mimeType": "image/svg+xml",
+      "attribution": "Own work",
+      "license": "Public domain"
+    }
   },
   {
     "id": "03",
@@ -19,7 +26,14 @@
     "validFrom": 2024,
     "status": "current",
     "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
-    "wikipediaUrl": "https://no.wikipedia.org/wiki/Oslo"
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Oslo",
+    "coatOfArms": {
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Oslo_komm.svg",
+      "localPath": "/assets/heraldry/counties/county-03-oslo.svg",
+      "mimeType": "image/svg+xml",
+      "attribution": "Unknown authorUnknown author",
+      "license": "Public domain"
+    }
   },
   {
     "id": "46",
@@ -30,7 +44,14 @@
     "validFrom": 2024,
     "status": "current",
     "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
-    "wikipediaUrl": "https://no.wikipedia.org/wiki/Vestland"
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Vestland",
+    "coatOfArms": {
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Vestland_våpen.svg",
+      "localPath": "/assets/heraldry/counties/county-46-vestland.svg",
+      "mimeType": "image/svg+xml",
+      "attribution": "Unknown authorUnknown author",
+      "license": "Public domain"
+    }
   },
   {
     "id": "11",
@@ -41,7 +62,14 @@
     "validFrom": 2024,
     "status": "current",
     "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
-    "wikipediaUrl": "https://no.wikipedia.org/wiki/Rogaland"
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Rogaland",
+    "coatOfArms": {
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Rogaland_våpen.svg",
+      "localPath": "/assets/heraldry/counties/county-11-rogaland.svg",
+      "mimeType": "image/svg+xml",
+      "attribution": "Hallvard Trætteberg, SKvalen",
+      "license": "Public domain"
+    }
   },
   {
     "id": "50",
@@ -52,7 +80,14 @@
     "validFrom": 2024,
     "status": "current",
     "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
-    "wikipediaUrl": "https://no.wikipedia.org/wiki/Tr%C3%B8ndelag"
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Tr%C3%B8ndelag",
+    "coatOfArms": {
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Trøndelag_våpen.svg",
+      "localPath": "/assets/heraldry/counties/county-50-trondelag.svg",
+      "mimeType": "image/svg+xml",
+      "attribution": "Spider",
+      "license": "Public domain"
+    }
   },
   {
     "id": "34",
@@ -63,7 +98,14 @@
     "validFrom": 2024,
     "status": "current",
     "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
-    "wikipediaUrl": "https://no.wikipedia.org/wiki/Innlandet"
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Innlandet",
+    "coatOfArms": {
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Innlandet_våpen.svg",
+      "localPath": "/assets/heraldry/counties/county-34-innlandet.svg",
+      "mimeType": "image/svg+xml",
+      "attribution": "Unknown authorUnknown author",
+      "license": "Public domain"
+    }
   },
   {
     "id": "42",
@@ -74,7 +116,14 @@
     "validFrom": 2024,
     "status": "current",
     "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
-    "wikipediaUrl": "https://no.wikipedia.org/wiki/Agder"
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Agder",
+    "coatOfArms": {
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Agder_våpen.svg",
+      "localPath": "/assets/heraldry/counties/county-42-agder.svg",
+      "mimeType": "image/svg+xml",
+      "attribution": "Agder fylkeskommune",
+      "license": "Public domain"
+    }
   },
   {
     "id": "31",
@@ -85,7 +134,14 @@
     "validFrom": 2024,
     "status": "current",
     "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
-    "wikipediaUrl": "https://no.wikipedia.org/wiki/%C3%98stfold"
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/%C3%98stfold",
+    "coatOfArms": {
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Østfold_våpen.svg",
+      "localPath": "/assets/heraldry/counties/county-31-ostfold.svg",
+      "mimeType": "image/svg+xml",
+      "attribution": "Hallvard Trætteberg, SKvalen",
+      "license": "Public domain"
+    }
   },
   {
     "id": "15",
@@ -96,7 +152,14 @@
     "validFrom": 2024,
     "status": "current",
     "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
-    "wikipediaUrl": "https://no.wikipedia.org/wiki/M%C3%B8re_og_Romsdal"
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/M%C3%B8re_og_Romsdal",
+    "coatOfArms": {
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Møre_og_Romsdal_våpen.svg",
+      "localPath": "/assets/heraldry/counties/county-15-more-og-romsdal.svg",
+      "mimeType": "image/svg+xml",
+      "attribution": "Knowledgeisfree",
+      "license": "Public domain"
+    }
   },
   {
     "id": "33",
@@ -107,7 +170,14 @@
     "validFrom": 2024,
     "status": "current",
     "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
-    "wikipediaUrl": "https://no.wikipedia.org/wiki/Fil:Buskerud_v%C3%A5pen.svg"
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Fil:Buskerud_v%C3%A5pen.svg",
+    "coatOfArms": {
+      "sourceUrl": "https://commons.wikimedia.org/wiki/Fil:Buskerud_v%C3%A5pen.svg",
+      "localPath": "/assets/heraldry/counties/county-33-buskerud.svg",
+      "mimeType": "image/svg+xml",
+      "attribution": "Hallvard Trætteberg, SKvalen",
+      "license": "Public domain"
+    }
   },
   {
     "id": "39",
@@ -118,7 +188,14 @@
     "validFrom": 2024,
     "status": "current",
     "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
-    "wikipediaUrl": "https://no.wikipedia.org/wiki/Fil:Vestfold_v%C3%A5pen_2024.svg"
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Fil:Vestfold_v%C3%A5pen_2024.svg",
+    "coatOfArms": {
+      "sourceUrl": "https://commons.wikimedia.org/wiki/Fil:Vestfold_v%C3%A5pen_2024.svg",
+      "localPath": "/assets/heraldry/counties/county-39-vestfold.svg",
+      "mimeType": "image/svg+xml",
+      "attribution": "Vestfold og Telemark fylkeskommune",
+      "license": "Public domain"
+    }
   },
   {
     "id": "18",
@@ -129,7 +206,14 @@
     "validFrom": 2024,
     "status": "current",
     "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
-    "wikipediaUrl": "https://no.wikipedia.org/wiki/Nordland"
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Nordland",
+    "coatOfArms": {
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Nordland_våpen.svg",
+      "localPath": "/assets/heraldry/counties/county-18-nordland.svg",
+      "mimeType": "image/svg+xml",
+      "attribution": "SKvalen",
+      "license": "Public domain"
+    }
   },
   {
     "id": "40",
@@ -140,7 +224,14 @@
     "validFrom": 2024,
     "status": "current",
     "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
-    "wikipediaUrl": "https://no.wikipedia.org/wiki/Fil:Telemark_v%C3%A5pen_2024.svg"
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Fil:Telemark_v%C3%A5pen_2024.svg",
+    "coatOfArms": {
+      "sourceUrl": "https://commons.wikimedia.org/wiki/Fil:Telemark_v%C3%A5pen_2024.svg",
+      "localPath": "/assets/heraldry/counties/county-40-telemark.svg",
+      "mimeType": "image/svg+xml",
+      "attribution": "Telemark fylkeskommune",
+      "license": "Public domain"
+    }
   },
   {
     "id": "55",
@@ -151,7 +242,14 @@
     "validFrom": 2024,
     "status": "current",
     "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
-    "wikipediaUrl": "https://no.wikipedia.org/wiki/Troms"
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Troms",
+    "coatOfArms": {
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Troms_våpen.svg",
+      "localPath": "/assets/heraldry/counties/county-55-troms.svg",
+      "mimeType": "image/svg+xml",
+      "attribution": "Own work  This W3C-unspecified vector image was created with Inkscape .",
+      "license": "Public domain"
+    }
   },
   {
     "id": "56",
@@ -162,6 +260,13 @@
     "validFrom": 2024,
     "status": "current",
     "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
-    "wikipediaUrl": "https://no.wikipedia.org/wiki/Finnmark"
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Finnmark",
+    "coatOfArms": {
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Finnmark_våpen.svg",
+      "localPath": "/assets/heraldry/counties/county-56-finnmark.svg",
+      "mimeType": "image/svg+xml",
+      "attribution": "Own work  This W3C-unspecified vector image was created with Inkscape .",
+      "license": "Public domain"
+    }
   }
 ]

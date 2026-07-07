@@ -18,7 +18,7 @@
       "hist-mun-0918-moland"
     ],
     "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Moland_komm.svg/40px-Moland_komm.svg",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/Fil:Moland_komm.svg",
       "localPath": "/assets/heraldry/municipalities/municipality-0918-austre-moland.svg",
       "mimeType": "image/svg+xml",
       "attribution": "Bjarkan",
@@ -44,7 +44,7 @@
       "4203"
     ],
     "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Arendal_komm.svg/40px-Arendal_komm.svg",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/Fil:Arendal_komm.svg",
       "localPath": "/assets/heraldry/municipalities/municipality-0990-barbu.svg",
       "mimeType": "image/svg+xml",
       "attribution": "Original by caplex.no",
@@ -70,7 +70,7 @@
       "4213"
     ],
     "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Tvedestrand_komm.svg/40px-Tvedestrand_komm.svg",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/Fil:Tvedestrand_komm.svg",
       "localPath": "/assets/heraldry/municipalities/municipality-0915-dypvag.svg",
       "mimeType": "image/svg+xml",
       "attribution": "Own work  This W3C-unspecified vector image was created with Inkscape .",
@@ -115,7 +115,7 @@
       "4219"
     ],
     "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Evje_og_Hornnes_komm.svg/40px-Evje_og_Hornnes_komm.svg",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/Fil:Evje_og_Hornnes_komm.svg",
       "localPath": "/assets/heraldry/municipalities/municipality-0937-evje.svg",
       "mimeType": "image/svg+xml",
       "attribution": "Own work  This W3C-unspecified vector image was created with Inkscape .",
@@ -162,7 +162,7 @@
       "4202"
     ],
     "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Grimstad_komm.svg/40px-Grimstad_komm.svg",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/Fil:Grimstad_komm.svg",
       "localPath": "/assets/heraldry/municipalities/municipality-0923-fjaere.svg",
       "mimeType": "image/svg+xml",
       "attribution": "Original by caplex.no",
@@ -188,7 +188,7 @@
       "hist-mun-0918-moland"
     ],
     "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Moland_komm.svg/40px-Moland_komm.svg",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/Fil:Moland_komm.svg",
       "localPath": "/assets/heraldry/municipalities/municipality-0916-flosta.svg",
       "mimeType": "image/svg+xml",
       "attribution": "Bjarkan",
@@ -214,7 +214,7 @@
       "4217"
     ],
     "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/%C3%85mli_komm.svg/40px-%C3%85mli_komm.svg",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/Fil:%C3%85mli_komm.svg",
       "localPath": "/assets/heraldry/municipalities/municipality-0930-gjovdal.svg",
       "mimeType": "image/svg+xml",
       "attribution": "Own work  This W3C-unspecified vector image was created with Inkscape .",
@@ -240,7 +240,7 @@
       "4216"
     ],
     "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Birkenes_komm.svg/40px-Birkenes_komm.svg",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/Fil:Birkenes_komm.svg",
       "localPath": "/assets/heraldry/municipalities/municipality-0933-herefoss.svg",
       "mimeType": "image/svg+xml",
       "license": "Public domain"
@@ -265,7 +265,7 @@
       "4203"
     ],
     "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Arendal_komm.svg/40px-Arendal_komm.svg",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/Fil:Arendal_komm.svg",
       "localPath": "/assets/heraldry/municipalities/municipality-0922-hisoy.svg",
       "mimeType": "image/svg+xml",
       "attribution": "Original by caplex.no",
@@ -289,14 +289,7 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Holt_(Tvedestrand)",
     "resultIds": [
       "4213"
-    ],
-    "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Tvedestrand_komm.svg/40px-Tvedestrand_komm.svg",
-      "localPath": "/assets/heraldry/municipalities/municipality-0914-holt.svg",
-      "mimeType": "image/svg+xml",
-      "attribution": "Own work  This W3C-unspecified vector image was created with Inkscape .",
-      "license": "Public domain"
-    }
+    ]
   },
   {
     "id": "hist-mun-0936-hornnes",
@@ -315,14 +308,7 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Hornnes",
     "resultIds": [
       "4219"
-    ],
-    "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Evje_og_Hornnes_komm.svg/40px-Evje_og_Hornnes_komm.svg",
-      "localPath": "/assets/heraldry/municipalities/municipality-0936-hornnes.svg",
-      "mimeType": "image/svg+xml",
-      "attribution": "Own work  This W3C-unspecified vector image was created with Inkscape .",
-      "license": "Public domain"
-    }
+    ]
   },
   {
     "id": "hist-mun-0935-hornnes-og-iveland",
@@ -362,14 +348,7 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Hylestad",
     "resultIds": [
       "4221"
-    ],
-    "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Valle_komm.svg/40px-Valle_komm.svg",
-      "localPath": "/assets/heraldry/municipalities/municipality-0939-hylestad.svg",
-      "mimeType": "image/svg+xml",
-      "attribution": "Own work  /",
-      "license": "Public domain"
-    }
+    ]
   },
   {
     "id": "hist-mun-0927-hovag",
@@ -388,14 +367,7 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/H%C3%B8v%C3%A5g",
     "resultIds": [
       "4215"
-    ],
-    "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Lillesand_komm.svg/40px-Lillesand_komm.svg",
-      "localPath": "/assets/heraldry/municipalities/municipality-0927-hovag.svg",
-      "mimeType": "image/svg+xml",
-      "attribution": "Original by caplex.no",
-      "license": "Public domain"
-    }
+    ]
   },
   {
     "id": "hist-mun-0924-landvik",
@@ -414,14 +386,7 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Landvik",
     "resultIds": [
       "4202"
-    ],
-    "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Grimstad_komm.svg/40px-Grimstad_komm.svg",
-      "localPath": "/assets/heraldry/municipalities/municipality-0924-landvik.svg",
-      "mimeType": "image/svg+xml",
-      "attribution": "Original by caplex.no",
-      "license": "Public domain"
-    }
+    ]
   },
   {
     "id": "hist-mun-0918-moland",
@@ -440,14 +405,7 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Moland",
     "resultIds": [
       "4203"
-    ],
-    "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Arendal_komm.svg/40px-Arendal_komm.svg",
-      "localPath": "/assets/heraldry/municipalities/municipality-0918-moland.svg",
-      "mimeType": "image/svg+xml",
-      "attribution": "Original by caplex.no",
-      "license": "Public domain"
-    }
+    ]
   },
   {
     "id": "hist-mun-0932-mykland",
@@ -466,14 +424,7 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Mykland",
     "resultIds": [
       "4214"
-    ],
-    "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Froland_komm.svg/40px-Froland_komm.svg",
-      "localPath": "/assets/heraldry/municipalities/municipality-0932-mykland.svg",
-      "mimeType": "image/svg+xml",
-      "attribution": "Original by caplex.no",
-      "license": "Public domain"
-    }
+    ]
   },
   {
     "id": "hist-mun-0917-stokken",
@@ -492,14 +443,7 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Stokken",
     "resultIds": [
       "hist-mun-0918-moland"
-    ],
-    "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Moland_komm.svg/40px-Moland_komm.svg",
-      "localPath": "/assets/heraldry/municipalities/municipality-0917-stokken.svg",
-      "mimeType": "image/svg+xml",
-      "attribution": "Bjarkan",
-      "license": "CC BY-SA 4.0"
-    }
+    ]
   },
   {
     "id": "hist-mun-0913-sondeled",
@@ -518,14 +462,7 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/S%C3%B8ndeled",
     "resultIds": [
       "4201"
-    ],
-    "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Ris%C3%B8r_komm.svg/40px-Ris%C3%B8r_komm.svg",
-      "localPath": "/assets/heraldry/municipalities/municipality-0913-sondeled.svg",
-      "mimeType": "image/svg+xml",
-      "attribution": "Original by caplex.no",
-      "license": "Public domain"
-    }
+    ]
   },
   {
     "id": "hist-mun-0931-tovdal",
@@ -544,14 +481,7 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Tovdal",
     "resultIds": [
       "4217"
-    ],
-    "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/%C3%85mli_komm.svg/40px-%C3%85mli_komm.svg",
-      "localPath": "/assets/heraldry/municipalities/municipality-0931-tovdal.svg",
-      "mimeType": "image/svg+xml",
-      "attribution": "Own work  This W3C-unspecified vector image was created with Inkscape .",
-      "license": "Public domain"
-    }
+    ]
   },
   {
     "id": "hist-mun-0921-tromoy",
@@ -570,14 +500,7 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Trom%C3%B8y",
     "resultIds": [
       "4203"
-    ],
-    "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Arendal_komm.svg/40px-Arendal_komm.svg",
-      "localPath": "/assets/heraldry/municipalities/municipality-0921-tromoy.svg",
-      "mimeType": "image/svg+xml",
-      "attribution": "Original by caplex.no",
-      "license": "Public domain"
-    }
+    ]
   },
   {
     "id": "hist-mun-0934-vegusdal",
@@ -596,13 +519,7 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Vegusdal",
     "resultIds": [
       "4216"
-    ],
-    "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Birkenes_komm.svg/40px-Birkenes_komm.svg",
-      "localPath": "/assets/heraldry/municipalities/municipality-0934-vegusdal.svg",
-      "mimeType": "image/svg+xml",
-      "license": "Public domain"
-    }
+    ]
   },
   {
     "id": "hist-mun-0926-vestre-moland",
@@ -621,14 +538,7 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Vestre_Moland",
     "resultIds": [
       "4215"
-    ],
-    "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Lillesand_komm.svg/40px-Lillesand_komm.svg",
-      "localPath": "/assets/heraldry/municipalities/municipality-0926-vestre-moland.svg",
-      "mimeType": "image/svg+xml",
-      "attribution": "Original by caplex.no",
-      "license": "Public domain"
-    }
+    ]
   },
   {
     "id": "hist-mun-0920-oyestad",
@@ -647,14 +557,7 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/%C3%98yestad",
     "resultIds": [
       "4203"
-    ],
-    "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Arendal_komm.svg/40px-Arendal_komm.svg",
-      "localPath": "/assets/heraldry/municipalities/municipality-0920-oyestad.svg",
-      "mimeType": "image/svg+xml",
-      "attribution": "Original by caplex.no",
-      "license": "Public domain"
-    }
+    ]
   },
   {
     "id": "hist-mun-1027-audnedal",
@@ -673,14 +576,7 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Audnedal",
     "resultIds": [
       "4225"
-    ],
-    "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Lyngdal_komm.svg/40px-Lyngdal_komm.svg",
-      "localPath": "/assets/heraldry/municipalities/municipality-1027-audnedal.svg",
-      "mimeType": "image/svg+xml",
-      "attribution": "Original by lyngdal.kommune.no",
-      "license": "Public domain"
-    }
+    ]
   },
   {
     "id": "hist-mun-1031-austad",
@@ -699,14 +595,7 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Austad",
     "resultIds": [
       "4225"
-    ],
-    "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Lyngdal_komm.svg/40px-Lyngdal_komm.svg",
-      "localPath": "/assets/heraldry/municipalities/municipality-1031-austad.svg",
-      "mimeType": "image/svg+xml",
-      "attribution": "Original by lyngdal.kommune.no",
-      "license": "Public domain"
-    }
+    ]
   },
   {
     "id": "hist-mun-1045-bakke",
@@ -1030,14 +919,7 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Kv%C3%A5s",
     "resultIds": [
       "4225"
-    ],
-    "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Lyngdal_komm.svg/40px-Lyngdal_komm.svg",
-      "localPath": "/assets/heraldry/municipalities/municipality-1033-kvas.svg",
-      "mimeType": "image/svg+xml",
-      "attribution": "Original by lyngdal.kommune.no",
-      "license": "Public domain"
-    }
+    ]
   },
   {
     "id": "hist-mun-1022-laudal",
@@ -1676,7 +1558,14 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Vang_(Hedmark)",
     "resultIds": [
       "3403"
-    ]
+    ],
+    "coatOfArms": {
+      "sourceUrl": "https://commons.wikimedia.org/wiki/Fil:Hamar_komm.svg",
+      "localPath": "/assets/heraldry/municipalities/municipality-0414-vang.svg",
+      "mimeType": "image/svg+xml",
+      "attribution": "Own work This W3C-unspecified vector image was created with Inkscape .",
+      "license": "Public domain"
+    }
   },
   {
     "id": "hist-mun-0421-vinger",
@@ -1714,7 +1603,14 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Ytre_Rendal",
     "resultIds": [
       "3424"
-    ]
+    ],
+    "coatOfArms": {
+      "sourceUrl": "https://commons.wikimedia.org/wiki/Fil:Rendalen_komm.svg",
+      "localPath": "/assets/heraldry/municipalities/municipality-0432-ytre-rendal.svg",
+      "mimeType": "image/svg+xml",
+      "attribution": "Own work This W3C-unspecified vector image was created with Inkscape .",
+      "license": "Public domain"
+    }
   },
   {
     "id": "hist-mun-0433-ovre-rendal",
@@ -1753,7 +1649,14 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/%C3%85snes_og_V%C3%A5ler",
     "resultIds": [
       "3418"
-    ]
+    ],
+    "coatOfArms": {
+      "sourceUrl": "https://commons.wikimedia.org/wiki/Fil:V%C3%A5ler_Innlandet_komm.svg",
+      "localPath": "/assets/heraldry/municipalities/municipality-0425-asnes-og-valer.svg",
+      "mimeType": "image/svg+xml",
+      "attribution": "Original by caplex.no",
+      "license": "Public domain"
+    }
   },
   {
     "id": "hist-mun-0525-biri",
@@ -1772,7 +1675,14 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Biri",
     "resultIds": [
       "3407"
-    ]
+    ],
+    "coatOfArms": {
+      "sourceUrl": "https://commons.wikimedia.org/wiki/Fil:Gj%C3%B8vik_komm.svg",
+      "localPath": "/assets/heraldry/municipalities/municipality-0525-biri.svg",
+      "mimeType": "image/svg+xml",
+      "attribution": "Original by caplex.no",
+      "license": "Public domain"
+    }
   },
   {
     "id": "hist-mun-0535-brandbu",
@@ -1791,7 +1701,14 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Brandbu",
     "resultIds": [
       "3446"
-    ]
+    ],
+    "coatOfArms": {
+      "sourceUrl": "https://commons.wikimedia.org/wiki/Fil:Gran_komm.svg",
+      "localPath": "/assets/heraldry/municipalities/municipality-0535-brandbu.svg",
+      "mimeType": "image/svg+xml",
+      "attribution": "Original by caplex.no",
+      "license": "Public domain"
+    }
   },
   {
     "id": "hist-mun-0530-eina",
@@ -1810,7 +1727,14 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Eina",
     "resultIds": [
       "3443"
-    ]
+    ],
+    "coatOfArms": {
+      "sourceUrl": "https://commons.wikimedia.org/wiki/Fil:Vestre_Toten_komm.svg",
+      "localPath": "/assets/heraldry/municipalities/municipality-0530-eina.svg",
+      "mimeType": "image/svg+xml",
+      "attribution": "Original by caplex.no",
+      "license": "Public domain"
+    }
   },
   {
     "id": "hist-mun-0537-fluberg",
@@ -1829,7 +1753,14 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Fluberg",
     "resultIds": [
       "3447"
-    ]
+    ],
+    "coatOfArms": {
+      "sourceUrl": "https://commons.wikimedia.org/wiki/Fil:S%C3%B8ndre_Land_komm.svg",
+      "localPath": "/assets/heraldry/municipalities/municipality-0537-fluberg.svg",
+      "mimeType": "image/svg+xml",
+      "attribution": "Own work  This W3C-unspecified vector image was created with Inkscape .",
+      "license": "Public domain"
+    }
   },
   {
     "id": "hist-mun-0518-fron",
@@ -1850,7 +1781,14 @@
     "resultIds": [
       "3436",
       "3438"
-    ]
+    ],
+    "coatOfArms": {
+      "sourceUrl": "https://commons.wikimedia.org/wiki/Fil:Nord-Fron_komm.svg",
+      "localPath": "/assets/heraldry/municipalities/municipality-0518-fron.svg",
+      "mimeType": "image/svg+xml",
+      "attribution": "Original by caplex.no",
+      "license": "Public domain"
+    }
   },
   {
     "id": "hist-mun-0524-faberg",
@@ -1869,7 +1807,14 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/F%C3%A5berg",
     "resultIds": [
       "3405"
-    ]
+    ],
+    "coatOfArms": {
+      "sourceUrl": "https://commons.wikimedia.org/wiki/Fil:Lillehammer_komm.svg",
+      "localPath": "/assets/heraldry/municipalities/municipality-0524-faberg.svg",
+      "mimeType": "image/svg+xml",
+      "attribution": "Own work This W3C-unspecified vector image was created with Inkscape .",
+      "license": "Public domain"
+    }
   },
   {
     "id": "hist-mun-0516-heidal",
@@ -1888,7 +1833,14 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Heidal_kommune",
     "resultIds": [
       "3437"
-    ]
+    ],
+    "coatOfArms": {
+      "sourceUrl": "https://commons.wikimedia.org/wiki/Fil:Sel_komm.svg",
+      "localPath": "/assets/heraldry/municipalities/municipality-0516-heidal.svg",
+      "mimeType": "image/svg+xml",
+      "attribution": "Original by caplex.no",
+      "license": "Public domain"
+    }
   },
   {
     "id": "hist-mun-0531-kolbu",
