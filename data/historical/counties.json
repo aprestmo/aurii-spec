@@ -11,6 +11,7 @@
     ],
     "newCountyNumber": "31",
     "changeType": "reestablished",
+    "status": "historical",
     "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
     "wikipediaUrl": "https://no.wikipedia.org/wiki/%C3%98stfold",
     "todayPartOfIds": []
@@ -27,6 +28,7 @@
     ],
     "newCountyNumber": "32",
     "changeType": "reestablished",
+    "status": "historical",
     "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Akershus",
     "todayPartOfIds": []
@@ -43,6 +45,7 @@
     ],
     "newCountyNumber": "34",
     "changeType": "merged",
+    "status": "historical",
     "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Hedmark",
     "todayPartOfIds": [
@@ -61,6 +64,7 @@
     ],
     "newCountyNumber": "34",
     "changeType": "merged",
+    "status": "historical",
     "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Oppland",
     "todayPartOfIds": [
@@ -79,6 +83,7 @@
     ],
     "newCountyNumber": "33",
     "changeType": "reestablished",
+    "status": "historical",
     "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Buskerud",
     "todayPartOfIds": []
@@ -95,6 +100,7 @@
     ],
     "newCountyNumber": "39",
     "changeType": "reestablished",
+    "status": "historical",
     "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Vestfold",
     "todayPartOfIds": []
@@ -111,6 +117,7 @@
     ],
     "newCountyNumber": "40",
     "changeType": "reestablished",
+    "status": "historical",
     "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Telemark",
     "todayPartOfIds": []
@@ -127,6 +134,7 @@
     ],
     "newCountyNumber": "42",
     "changeType": "merged",
+    "status": "historical",
     "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Aust-Agder",
     "todayPartOfIds": [
@@ -145,6 +153,7 @@
     ],
     "newCountyNumber": "42",
     "changeType": "merged",
+    "status": "historical",
     "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Vest-Agder",
     "todayPartOfIds": [
@@ -163,6 +172,7 @@
     ],
     "newCountyNumber": "46",
     "changeType": "merged",
+    "status": "historical",
     "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Hordaland",
     "todayPartOfIds": [
@@ -181,6 +191,7 @@
     ],
     "newCountyNumber": "46",
     "changeType": "merged",
+    "status": "historical",
     "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Bergen",
     "todayPartOfIds": [
@@ -199,6 +210,7 @@
     ],
     "newCountyNumber": "46",
     "changeType": "merged",
+    "status": "historical",
     "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Sogn_og_Fjordane",
     "todayPartOfIds": [
@@ -217,6 +229,7 @@
     ],
     "newCountyNumber": "50",
     "changeType": "merged",
+    "status": "historical",
     "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
     "wikipediaUrl": "https://no.wikipedia.org/wiki/S%C3%B8r-Tr%C3%B8ndelag",
     "todayPartOfIds": [
@@ -235,6 +248,7 @@
     ],
     "newCountyNumber": "50",
     "changeType": "merged",
+    "status": "historical",
     "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Nord-Tr%C3%B8ndelag",
     "todayPartOfIds": [
@@ -253,6 +267,7 @@
     ],
     "newCountyNumber": "55",
     "changeType": "reestablished",
+    "status": "historical",
     "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Troms",
     "todayPartOfIds": []
@@ -269,6 +284,7 @@
     ],
     "newCountyNumber": "56",
     "changeType": "reestablished",
+    "status": "historical",
     "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Finnmark",
     "todayPartOfIds": []
@@ -286,8 +302,10 @@
       "Østfold"
     ],
     "changeType": "merged",
+    "status": "intermediate",
     "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Viken_(fylke)",
+    "validFrom": 2020,
     "todayPartOfIds": [
       "33",
       "32",
@@ -306,8 +324,10 @@
       "Telemark"
     ],
     "changeType": "merged",
+    "status": "intermediate",
     "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Vestfold_og_Telemark",
+    "validFrom": 2020,
     "todayPartOfIds": [
       "39",
       "40"
@@ -325,8 +345,10 @@
       "Finnmark"
     ],
     "changeType": "merged",
+    "status": "intermediate",
     "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Troms_og_Finnmark",
+    "validFrom": 2020,
     "todayPartOfIds": [
       "55",
       "56"

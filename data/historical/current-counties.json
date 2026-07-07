@@ -1,0 +1,167 @@
+[
+  {
+    "id": "32",
+    "type": "county",
+    "name": "Akershus",
+    "countyNumber": "32",
+    "administrativeCenter": "Oslo",
+    "validFrom": 2024,
+    "status": "current",
+    "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Akershus"
+  },
+  {
+    "id": "03",
+    "type": "county",
+    "name": "Oslo",
+    "countyNumber": "03",
+    "administrativeCenter": "Oslo",
+    "validFrom": 2024,
+    "status": "current",
+    "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Oslo"
+  },
+  {
+    "id": "46",
+    "type": "county",
+    "name": "Vestland",
+    "countyNumber": "46",
+    "administrativeCenter": "Bergen",
+    "validFrom": 2024,
+    "status": "current",
+    "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Vestland"
+  },
+  {
+    "id": "11",
+    "type": "county",
+    "name": "Rogaland",
+    "countyNumber": "11",
+    "administrativeCenter": "Stavanger",
+    "validFrom": 2024,
+    "status": "current",
+    "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Rogaland"
+  },
+  {
+    "id": "50",
+    "type": "county",
+    "name": "Trøndelag",
+    "countyNumber": "50",
+    "administrativeCenter": "Steinkjer",
+    "validFrom": 2024,
+    "status": "current",
+    "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Tr%C3%B8ndelag"
+  },
+  {
+    "id": "34",
+    "type": "county",
+    "name": "Innlandet",
+    "countyNumber": "34",
+    "administrativeCenter": "Hamar",
+    "validFrom": 2024,
+    "status": "current",
+    "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Innlandet"
+  },
+  {
+    "id": "42",
+    "type": "county",
+    "name": "Agder",
+    "countyNumber": "42",
+    "administrativeCenter": "Kristiansand",
+    "validFrom": 2024,
+    "status": "current",
+    "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Agder"
+  },
+  {
+    "id": "31",
+    "type": "county",
+    "name": "Østfold",
+    "countyNumber": "31",
+    "administrativeCenter": "Sarpsborg",
+    "validFrom": 2024,
+    "status": "current",
+    "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/%C3%98stfold"
+  },
+  {
+    "id": "15",
+    "type": "county",
+    "name": "Møre og Romsdal",
+    "countyNumber": "15",
+    "administrativeCenter": "Molde",
+    "validFrom": 2024,
+    "status": "current",
+    "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/M%C3%B8re_og_Romsdal"
+  },
+  {
+    "id": "33",
+    "type": "county",
+    "name": "Buskerud",
+    "countyNumber": "33",
+    "administrativeCenter": "Drammen",
+    "validFrom": 2024,
+    "status": "current",
+    "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Fil:Buskerud_v%C3%A5pen.svg"
+  },
+  {
+    "id": "39",
+    "type": "county",
+    "name": "Vestfold",
+    "countyNumber": "39",
+    "administrativeCenter": "Tønsberg",
+    "validFrom": 2024,
+    "status": "current",
+    "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Fil:Vestfold_v%C3%A5pen_2024.svg"
+  },
+  {
+    "id": "18",
+    "type": "county",
+    "name": "Nordland",
+    "countyNumber": "18",
+    "administrativeCenter": "Bodø",
+    "validFrom": 2024,
+    "status": "current",
+    "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Nordland"
+  },
+  {
+    "id": "40",
+    "type": "county",
+    "name": "Telemark",
+    "countyNumber": "40",
+    "administrativeCenter": "Skien",
+    "validFrom": 2024,
+    "status": "current",
+    "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Fil:Telemark_v%C3%A5pen_2024.svg"
+  },
+  {
+    "id": "55",
+    "type": "county",
+    "name": "Troms",
+    "countyNumber": "55",
+    "administrativeCenter": "Tromsø",
+    "validFrom": 2024,
+    "status": "current",
+    "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Troms"
+  },
+  {
+    "id": "56",
+    "type": "county",
+    "name": "Finnmark",
+    "countyNumber": "56",
+    "administrativeCenter": "Vadsø",
+    "validFrom": 2024,
+    "status": "current",
+    "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Finnmark"
+  }
+]

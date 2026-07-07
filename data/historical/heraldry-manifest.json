@@ -153,6 +153,15 @@
   },
   {
     "entityType": "municipality",
+    "name": "Søndeled",
+    "number": "0913",
+    "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Ris%C3%B8r_komm.svg/40px-Ris%C3%B8r_komm.svg",
+    "localPath": "/assets/heraldry/municipalities/municipality-0913-sondeled.svg",
+    "license": "Public domain",
+    "attribution": "Original by caplex.no"
+  },
+  {
+    "entityType": "municipality",
     "name": "Tovdal",
     "number": "0931",
     "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/%C3%85mli_komm.svg/40px-%C3%85mli_komm.svg",
@@ -197,128 +206,29 @@
   },
   {
     "entityType": "municipality",
-    "name": "Romedal",
-    "number": "0416",
-    "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Stange_komm.svg/40px-Stange_komm.svg",
-    "localPath": "/assets/heraldry/municipalities/municipality-0416-romedal.svg",
+    "name": "Audnedal",
+    "number": "1027",
+    "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Lyngdal_komm.svg/40px-Lyngdal_komm.svg",
+    "localPath": "/assets/heraldry/municipalities/municipality-1027-audnedal.svg",
     "license": "Public domain",
-    "attribution": "Own work This W3C-unspecified vector image was created with Inkscape ."
+    "attribution": "Original by lyngdal.kommune.no"
   },
   {
     "entityType": "municipality",
-    "name": "Vang",
-    "number": "0414",
-    "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Hamar_komm.svg/40px-Hamar_komm.svg",
-    "localPath": "/assets/heraldry/municipalities/municipality-0414-vang.svg",
+    "name": "Austad",
+    "number": "1031",
+    "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Lyngdal_komm.svg/40px-Lyngdal_komm.svg",
+    "localPath": "/assets/heraldry/municipalities/municipality-1031-austad.svg",
     "license": "Public domain",
-    "attribution": "Own work This W3C-unspecified vector image was created with Inkscape ."
+    "attribution": "Original by lyngdal.kommune.no"
   },
   {
     "entityType": "municipality",
-    "name": "Avaldsnes",
-    "number": "1147",
-    "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Karm%C3%B8y_komm.svg/40px-Karm%C3%B8y_komm.svg",
-    "localPath": "/assets/heraldry/municipalities/municipality-1147-avaldsnes.svg",
+    "name": "Kvås",
+    "number": "1033",
+    "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Lyngdal_komm.svg/40px-Lyngdal_komm.svg",
+    "localPath": "/assets/heraldry/municipalities/municipality-1033-kvas.svg",
     "license": "Public domain",
-    "attribution": "Original by caplex.no"
-  },
-  {
-    "entityType": "municipality",
-    "name": "Kopervik",
-    "number": "1105",
-    "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Karm%C3%B8y_komm.svg/40px-Karm%C3%B8y_komm.svg",
-    "localPath": "/assets/heraldry/municipalities/municipality-1105-kopervik.svg",
-    "license": "Public domain",
-    "attribution": "Original by caplex.no"
-  },
-  {
-    "entityType": "municipality",
-    "name": "Skudenes",
-    "number": "1150",
-    "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Karm%C3%B8y_komm.svg/40px-Karm%C3%B8y_komm.svg",
-    "localPath": "/assets/heraldry/municipalities/municipality-1150-skudenes.svg",
-    "license": "Public domain",
-    "attribution": "Original by caplex.no"
-  },
-  {
-    "entityType": "municipality",
-    "name": "Skudeneshavn",
-    "number": "1104",
-    "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Karm%C3%B8y_komm.svg/40px-Karm%C3%B8y_komm.svg",
-    "localPath": "/assets/heraldry/municipalities/municipality-1104-skudeneshavn.svg",
-    "license": "Public domain",
-    "attribution": "Original by caplex.no"
-  },
-  {
-    "entityType": "municipality",
-    "name": "Stangaland",
-    "number": "1148",
-    "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Karm%C3%B8y_komm.svg/40px-Karm%C3%B8y_komm.svg",
-    "localPath": "/assets/heraldry/municipalities/municipality-1148-stangaland.svg",
-    "license": "Public domain",
-    "attribution": "Original by caplex.no"
-  },
-  {
-    "entityType": "municipality",
-    "name": "Torvastad",
-    "number": "1152",
-    "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Karm%C3%B8y_komm.svg/40px-Karm%C3%B8y_komm.svg",
-    "localPath": "/assets/heraldry/municipalities/municipality-1152-torvastad.svg",
-    "license": "Public domain",
-    "attribution": "Original by caplex.no"
-  },
-  {
-    "entityType": "municipality",
-    "name": "Åkra",
-    "number": "1149",
-    "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Karm%C3%B8y_komm.svg/40px-Karm%C3%B8y_komm.svg",
-    "localPath": "/assets/heraldry/municipalities/municipality-1149-akra.svg",
-    "license": "Public domain",
-    "attribution": "Original by caplex.no"
-  },
-  {
-    "entityType": "municipality",
-    "name": "Tromsøysund",
-    "number": "1934",
-    "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Troms%C3%B8_komm.svg/40px-Troms%C3%B8_komm.svg",
-    "localPath": "/assets/heraldry/municipalities/municipality-1934-tromsoysund.svg",
-    "license": "Public domain",
-    "attribution": "Own work"
-  },
-  {
-    "entityType": "municipality",
-    "name": "Ullsfjord",
-    "number": "1937",
-    "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Troms%C3%B8_komm.svg/40px-Troms%C3%B8_komm.svg",
-    "localPath": "/assets/heraldry/municipalities/municipality-1937-ullsfjord.svg",
-    "license": "Public domain",
-    "attribution": "Own work"
-  },
-  {
-    "entityType": "municipality",
-    "name": "Andebu",
-    "number": "0719",
-    "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Sandefjord_komm_2017.svg/40px-Sandefjord_komm_2017.svg",
-    "localPath": "/assets/heraldry/municipalities/municipality-0719-andebu.svg",
-    "license": "Public domain",
-    "attribution": "Sandefjord kommune"
-  },
-  {
-    "entityType": "municipality",
-    "name": "Sandar",
-    "number": "0724",
-    "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Sandefjord_komm_2017.svg/40px-Sandefjord_komm_2017.svg",
-    "localPath": "/assets/heraldry/municipalities/municipality-0724-sandar.svg",
-    "license": "Public domain",
-    "attribution": "Sandefjord kommune"
-  },
-  {
-    "entityType": "municipality",
-    "name": "Stokke",
-    "number": "0720",
-    "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Sandefjord_komm_2017.svg/40px-Sandefjord_komm_2017.svg",
-    "localPath": "/assets/heraldry/municipalities/municipality-0720-stokke.svg",
-    "license": "Public domain",
-    "attribution": "Sandefjord kommune"
+    "attribution": "Original by lyngdal.kommune.no"
   }
 ]

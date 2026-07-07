@@ -518,7 +518,14 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/S%C3%B8ndeled",
     "resultIds": [
       "4201"
-    ]
+    ],
+    "coatOfArms": {
+      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Ris%C3%B8r_komm.svg/40px-Ris%C3%B8r_komm.svg",
+      "localPath": "/assets/heraldry/municipalities/municipality-0913-sondeled.svg",
+      "mimeType": "image/svg+xml",
+      "attribution": "Original by caplex.no",
+      "license": "Public domain"
+    }
   },
   {
     "id": "hist-mun-0931-tovdal",
@@ -666,7 +673,14 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Audnedal",
     "resultIds": [
       "4225"
-    ]
+    ],
+    "coatOfArms": {
+      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Lyngdal_komm.svg/40px-Lyngdal_komm.svg",
+      "localPath": "/assets/heraldry/municipalities/municipality-1027-audnedal.svg",
+      "mimeType": "image/svg+xml",
+      "attribution": "Original by lyngdal.kommune.no",
+      "license": "Public domain"
+    }
   },
   {
     "id": "hist-mun-1031-austad",
@@ -685,7 +699,14 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Austad",
     "resultIds": [
       "4225"
-    ]
+    ],
+    "coatOfArms": {
+      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Lyngdal_komm.svg/40px-Lyngdal_komm.svg",
+      "localPath": "/assets/heraldry/municipalities/municipality-1031-austad.svg",
+      "mimeType": "image/svg+xml",
+      "attribution": "Original by lyngdal.kommune.no",
+      "license": "Public domain"
+    }
   },
   {
     "id": "hist-mun-1045-bakke",
@@ -1009,7 +1030,14 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Kv%C3%A5s",
     "resultIds": [
       "4225"
-    ]
+    ],
+    "coatOfArms": {
+      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Lyngdal_komm.svg/40px-Lyngdal_komm.svg",
+      "localPath": "/assets/heraldry/municipalities/municipality-1033-kvas.svg",
+      "mimeType": "image/svg+xml",
+      "attribution": "Original by lyngdal.kommune.no",
+      "license": "Public domain"
+    }
   },
   {
     "id": "hist-mun-1022-laudal",
@@ -1589,14 +1617,7 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Romedal",
     "resultIds": [
       "3413"
-    ],
-    "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Stange_komm.svg/40px-Stange_komm.svg",
-      "localPath": "/assets/heraldry/municipalities/municipality-0416-romedal.svg",
-      "mimeType": "image/svg+xml",
-      "attribution": "Own work This W3C-unspecified vector image was created with Inkscape .",
-      "license": "Public domain"
-    }
+    ]
   },
   {
     "id": "hist-mun-0580-sollia",
@@ -1655,14 +1676,7 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Vang_(Hedmark)",
     "resultIds": [
       "3403"
-    ],
-    "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Hamar_komm.svg/40px-Hamar_komm.svg",
-      "localPath": "/assets/heraldry/municipalities/municipality-0414-vang.svg",
-      "mimeType": "image/svg+xml",
-      "attribution": "Own work This W3C-unspecified vector image was created with Inkscape .",
-      "license": "Public domain"
-    }
+    ]
   },
   {
     "id": "hist-mun-0421-vinger",
@@ -2729,14 +2743,7 @@
     "resultIds": [
       "1149",
       "1146"
-    ],
-    "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Karm%C3%B8y_komm.svg/40px-Karm%C3%B8y_komm.svg",
-      "localPath": "/assets/heraldry/municipalities/municipality-1147-avaldsnes.svg",
-      "mimeType": "image/svg+xml",
-      "attribution": "Original by caplex.no",
-      "license": "Public domain"
-    }
+    ]
   },
   {
     "id": "hist-mun-1101-egersund",
@@ -3050,14 +3057,7 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Kopervik",
     "resultIds": [
       "1149"
-    ],
-    "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Karm%C3%B8y_komm.svg/40px-Karm%C3%B8y_komm.svg",
-      "localPath": "/assets/heraldry/municipalities/municipality-1105-kopervik.svg",
-      "mimeType": "image/svg+xml",
-      "attribution": "Original by caplex.no",
-      "license": "Public domain"
-    }
+    ]
   },
   {
     "id": "hist-mun-1125-madla",
@@ -3268,14 +3268,7 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Skudenes_(kommune)",
     "resultIds": [
       "1149"
-    ],
-    "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Karm%C3%B8y_komm.svg/40px-Karm%C3%B8y_komm.svg",
-      "localPath": "/assets/heraldry/municipalities/municipality-1150-skudenes.svg",
-      "mimeType": "image/svg+xml",
-      "attribution": "Original by caplex.no",
-      "license": "Public domain"
-    }
+    ]
   },
   {
     "id": "hist-mun-1104-skudeneshavn",
@@ -3294,14 +3287,7 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Skudeneshavn",
     "resultIds": [
       "1149"
-    ],
-    "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Karm%C3%B8y_komm.svg/40px-Karm%C3%B8y_komm.svg",
-      "localPath": "/assets/heraldry/municipalities/municipality-1104-skudeneshavn.svg",
-      "mimeType": "image/svg+xml",
-      "attribution": "Original by caplex.no",
-      "license": "Public domain"
-    }
+    ]
   },
   {
     "id": "hist-mun-1153-skare",
@@ -3358,14 +3344,7 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Stangeland_(Karm%C3%B8y)",
     "resultIds": [
       "1149"
-    ],
-    "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Karm%C3%B8y_komm.svg/40px-Karm%C3%B8y_komm.svg",
-      "localPath": "/assets/heraldry/municipalities/municipality-1148-stangaland.svg",
-      "mimeType": "image/svg+xml",
-      "attribution": "Original by caplex.no",
-      "license": "Public domain"
-    }
+    ]
   },
   {
     "id": "hist-mun-1152-torvastad",
@@ -3384,14 +3363,7 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Torvastad",
     "resultIds": [
       "1149"
-    ],
-    "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Karm%C3%B8y_komm.svg/40px-Karm%C3%B8y_komm.svg",
-      "localPath": "/assets/heraldry/municipalities/municipality-1152-torvastad.svg",
-      "mimeType": "image/svg+xml",
-      "attribution": "Original by caplex.no",
-      "license": "Public domain"
-    }
+    ]
   },
   {
     "id": "hist-mun-1155-vats",
@@ -3486,14 +3458,7 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/%C3%85kra_(kommune)",
     "resultIds": [
       "1149"
-    ],
-    "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Karm%C3%B8y_komm.svg/40px-Karm%C3%B8y_komm.svg",
-      "localPath": "/assets/heraldry/municipalities/municipality-1149-akra.svg",
-      "mimeType": "image/svg+xml",
-      "attribution": "Original by caplex.no",
-      "license": "Public domain"
-    }
+    ]
   },
   {
     "id": "hist-mun-1131-ardal",
@@ -3763,14 +3728,7 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Troms%C3%B8ysund",
     "resultIds": [
       "5501"
-    ],
-    "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Troms%C3%B8_komm.svg/40px-Troms%C3%B8_komm.svg",
-      "localPath": "/assets/heraldry/municipalities/municipality-1934-tromsoysund.svg",
-      "mimeType": "image/svg+xml",
-      "attribution": "Own work",
-      "license": "Public domain"
-    }
+    ]
   },
   {
     "id": "hist-mun-1914-trondenes",
@@ -3808,14 +3766,7 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Ullsfjord",
     "resultIds": [
       "5501"
-    ],
-    "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Troms%C3%B8_komm.svg/40px-Troms%C3%B8_komm.svg",
-      "localPath": "/assets/heraldry/municipalities/municipality-1937-ullsfjord.svg",
-      "mimeType": "image/svg+xml",
-      "attribution": "Own work",
-      "license": "Public domain"
-    }
+    ]
   },
   {
     "id": "hist-mun-1923-overbygd",
@@ -3969,14 +3920,7 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Andebu_(tidligere_kommune)",
     "resultIds": [
       "3907"
-    ],
-    "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Sandefjord_komm_2017.svg/40px-Sandefjord_komm_2017.svg",
-      "localPath": "/assets/heraldry/municipalities/municipality-0719-andebu.svg",
-      "mimeType": "image/svg+xml",
-      "attribution": "Sandefjord kommune",
-      "license": "Public domain"
-    }
+    ]
   },
   {
     "id": "hist-mun-0717-borre",
@@ -4168,14 +4112,7 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Sandar_kommune",
     "resultIds": [
       "3907"
-    ],
-    "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Sandefjord_komm_2017.svg/40px-Sandefjord_komm_2017.svg",
-      "localPath": "/assets/heraldry/municipalities/municipality-0724-sandar.svg",
-      "mimeType": "image/svg+xml",
-      "attribution": "Sandefjord kommune",
-      "license": "Public domain"
-    }
+    ]
   },
   {
     "id": "hist-mun-0713-sande",
@@ -4270,14 +4207,7 @@
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Stokke_(kommune)",
     "resultIds": [
       "3907"
-    ],
-    "coatOfArms": {
-      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Sandefjord_komm_2017.svg/40px-Sandefjord_komm_2017.svg",
-      "localPath": "/assets/heraldry/municipalities/municipality-0720-stokke.svg",
-      "mimeType": "image/svg+xml",
-      "attribution": "Sandefjord kommune",
-      "license": "Public domain"
-    }
+    ]
   },
   {
     "id": "hist-mun-0711-stromm",
