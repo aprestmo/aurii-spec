@@ -3844,7 +3844,7 @@
     "id": "change-municipality-borre-2002-179",
     "entityType": "municipality",
     "changeYear": 2002,
-    "changeType": "split",
+    "changeType": "renamed",
     "from": [
       {
         "name": "Borre",
@@ -3853,10 +3853,6 @@
       }
     ],
     "to": [
-      {
-        "name": "Borre",
-        "id": "hist-mun-0717-borre"
-      },
       {
         "name": "Horten",
         "id": "3901"
