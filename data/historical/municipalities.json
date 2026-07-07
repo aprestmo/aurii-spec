@@ -3882,16 +3882,14 @@
     "countyNameAtSource": "Vestfold og Telemark",
     "validFrom": 1838,
     "validTo": 2002,
-    "changeType": "merged",
+    "changeType": "renamed",
     "notes": "Slått sammen med Horten til Borre , ble senere i 2002 endret tilbake til Horten",
     "resultNames": [
-      "Borre",
       "Horten"
     ],
     "sourceUrl": "https://no.wikipedia.org/wiki/Liste_over_tidligere_norske_kommuner",
     "wikipediaUrl": "https://no.wikipedia.org/wiki/Borre_kommune",
     "resultIds": [
-      "hist-mun-0717-borre",
       "3901"
     ]
   },
