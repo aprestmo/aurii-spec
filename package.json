@@ -19,6 +19,7 @@
     "serve": "bun run --filter='@aurii/core' serve",
     "fetch:norwegian-geo": "bun run demo/norwegian-geo/scripts/fetch.ts",
     "fetch:historical-norwegian-geo": "bun run demo/norwegian-geo/core/historical/fetch-historical.ts",
+    "fetch:ssb-identifiers-norwegian-geo": "bun run demo/norwegian-geo/core/historical/fetch-ssb-identifiers.ts",
     "build:municipality-enrichment": "bun run demo/norwegian-geo/core/historical/build-enrichment.ts",
     "validate:historical-norwegian-geo": "bun run demo/norwegian-geo/core/historical/validate.ts",
     "import:norwegian-geo": "bun run demo/norwegian-geo/scripts/import.ts"
