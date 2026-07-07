@@ -1,0 +1,335 @@
+[
+  {
+    "id": "hist-county-01-ostfold",
+    "type": "county",
+    "name": "Østfold",
+    "countyNumber": "01",
+    "administrativeCenter": "Sarpsborg",
+    "validTo": 2020,
+    "todayPartOfNames": [
+      "Gjenopprettet 2024"
+    ],
+    "newCountyNumber": "31",
+    "changeType": "reestablished",
+    "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/%C3%98stfold",
+    "todayPartOfIds": []
+  },
+  {
+    "id": "hist-county-02-akershus",
+    "type": "county",
+    "name": "Akershus",
+    "countyNumber": "02",
+    "administrativeCenter": "Oslo",
+    "validTo": 2020,
+    "todayPartOfNames": [
+      "Gjenopprettet 2024"
+    ],
+    "newCountyNumber": "32",
+    "changeType": "reestablished",
+    "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Akershus",
+    "todayPartOfIds": []
+  },
+  {
+    "id": "hist-county-04-hedmark",
+    "type": "county",
+    "name": "Hedmark",
+    "countyNumber": "04",
+    "administrativeCenter": "Hamar",
+    "validTo": 2020,
+    "todayPartOfNames": [
+      "Innlandet"
+    ],
+    "newCountyNumber": "34",
+    "changeType": "merged",
+    "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Hedmark",
+    "todayPartOfIds": [
+      "34"
+    ]
+  },
+  {
+    "id": "hist-county-05-oppland",
+    "type": "county",
+    "name": "Oppland",
+    "countyNumber": "05",
+    "administrativeCenter": "Lillehammer",
+    "validTo": 2020,
+    "todayPartOfNames": [
+      "Innlandet"
+    ],
+    "newCountyNumber": "34",
+    "changeType": "merged",
+    "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Oppland",
+    "todayPartOfIds": [
+      "34"
+    ]
+  },
+  {
+    "id": "hist-county-06-buskerud",
+    "type": "county",
+    "name": "Buskerud",
+    "countyNumber": "06",
+    "administrativeCenter": "Drammen",
+    "validTo": 2020,
+    "todayPartOfNames": [
+      "Gjenopprettet 2024"
+    ],
+    "newCountyNumber": "33",
+    "changeType": "reestablished",
+    "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Buskerud",
+    "todayPartOfIds": []
+  },
+  {
+    "id": "hist-county-07-vestfold",
+    "type": "county",
+    "name": "Vestfold",
+    "countyNumber": "07",
+    "administrativeCenter": "Tønsberg",
+    "validTo": 2020,
+    "todayPartOfNames": [
+      "Gjenopprettet 2024"
+    ],
+    "newCountyNumber": "39",
+    "changeType": "reestablished",
+    "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Vestfold",
+    "todayPartOfIds": []
+  },
+  {
+    "id": "hist-county-08-telemark",
+    "type": "county",
+    "name": "Telemark",
+    "countyNumber": "08",
+    "administrativeCenter": "Skien",
+    "validTo": 2020,
+    "todayPartOfNames": [
+      "Gjenopprettet 2024"
+    ],
+    "newCountyNumber": "40",
+    "changeType": "reestablished",
+    "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Telemark",
+    "todayPartOfIds": []
+  },
+  {
+    "id": "hist-county-09-aust-agder",
+    "type": "county",
+    "name": "Aust-Agder",
+    "countyNumber": "09",
+    "administrativeCenter": "Arendal",
+    "validTo": 2020,
+    "todayPartOfNames": [
+      "Agder"
+    ],
+    "newCountyNumber": "42",
+    "changeType": "merged",
+    "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Aust-Agder",
+    "todayPartOfIds": [
+      "42"
+    ]
+  },
+  {
+    "id": "hist-county-10-vest-agder",
+    "type": "county",
+    "name": "Vest-Agder",
+    "countyNumber": "10",
+    "administrativeCenter": "Kristiansand",
+    "validTo": 2020,
+    "todayPartOfNames": [
+      "Agder"
+    ],
+    "newCountyNumber": "42",
+    "changeType": "merged",
+    "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Vest-Agder",
+    "todayPartOfIds": [
+      "42"
+    ]
+  },
+  {
+    "id": "hist-county-12-hordaland",
+    "type": "county",
+    "name": "Hordaland",
+    "countyNumber": "12",
+    "administrativeCenter": "Bergen",
+    "validTo": 2020,
+    "todayPartOfNames": [
+      "Vestland"
+    ],
+    "newCountyNumber": "46",
+    "changeType": "merged",
+    "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Hordaland",
+    "todayPartOfIds": [
+      "46"
+    ]
+  },
+  {
+    "id": "hist-county-13-bergen",
+    "type": "county",
+    "name": "Bergen",
+    "countyNumber": "13",
+    "administrativeCenter": "Bergen",
+    "validTo": 1972,
+    "todayPartOfNames": [
+      "Vestland"
+    ],
+    "newCountyNumber": "46",
+    "changeType": "merged",
+    "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Bergen",
+    "todayPartOfIds": [
+      "46"
+    ]
+  },
+  {
+    "id": "hist-county-14-sogn-og-fjordane",
+    "type": "county",
+    "name": "Sogn og Fjordane",
+    "countyNumber": "14",
+    "administrativeCenter": "Hermansverk",
+    "validTo": 2020,
+    "todayPartOfNames": [
+      "Vestland"
+    ],
+    "newCountyNumber": "46",
+    "changeType": "merged",
+    "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Sogn_og_Fjordane",
+    "todayPartOfIds": [
+      "46"
+    ]
+  },
+  {
+    "id": "hist-county-16-sor-trondelag",
+    "type": "county",
+    "name": "Sør-Trøndelag",
+    "countyNumber": "16",
+    "administrativeCenter": "Trondheim",
+    "validTo": 2018,
+    "todayPartOfNames": [
+      "Trøndelag"
+    ],
+    "newCountyNumber": "50",
+    "changeType": "merged",
+    "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/S%C3%B8r-Tr%C3%B8ndelag",
+    "todayPartOfIds": [
+      "50"
+    ]
+  },
+  {
+    "id": "hist-county-17-nord-trondelag",
+    "type": "county",
+    "name": "Nord-Trøndelag",
+    "countyNumber": "17",
+    "administrativeCenter": "Steinkjer",
+    "validTo": 2018,
+    "todayPartOfNames": [
+      "Trøndelag"
+    ],
+    "newCountyNumber": "50",
+    "changeType": "merged",
+    "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Nord-Tr%C3%B8ndelag",
+    "todayPartOfIds": [
+      "50"
+    ]
+  },
+  {
+    "id": "hist-county-19-troms",
+    "type": "county",
+    "name": "Troms",
+    "countyNumber": "19",
+    "administrativeCenter": "Tromsø",
+    "validTo": 2020,
+    "todayPartOfNames": [
+      "Gjenopprettet 2024"
+    ],
+    "newCountyNumber": "55",
+    "changeType": "reestablished",
+    "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Troms",
+    "todayPartOfIds": []
+  },
+  {
+    "id": "hist-county-20-finnmark",
+    "type": "county",
+    "name": "Finnmark",
+    "countyNumber": "20",
+    "administrativeCenter": "Vadsø",
+    "validTo": 2020,
+    "todayPartOfNames": [
+      "Gjenopprettet 2024"
+    ],
+    "newCountyNumber": "56",
+    "changeType": "reestablished",
+    "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Finnmark",
+    "todayPartOfIds": []
+  },
+  {
+    "id": "hist-county-30-viken",
+    "type": "county",
+    "name": "Viken",
+    "countyNumber": "30",
+    "administrativeCenter": "Drammen",
+    "validTo": 2023,
+    "todayPartOfNames": [
+      "Buskerud",
+      "Akershus",
+      "Østfold"
+    ],
+    "changeType": "merged",
+    "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Viken_(fylke)",
+    "todayPartOfIds": [
+      "33",
+      "32",
+      "31"
+    ]
+  },
+  {
+    "id": "hist-county-38-vestfold-og-telemark",
+    "type": "county",
+    "name": "Vestfold og Telemark",
+    "countyNumber": "38",
+    "administrativeCenter": "Skien",
+    "validTo": 2023,
+    "todayPartOfNames": [
+      "Vestfold",
+      "Telemark"
+    ],
+    "changeType": "merged",
+    "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Vestfold_og_Telemark",
+    "todayPartOfIds": [
+      "39",
+      "40"
+    ]
+  },
+  {
+    "id": "hist-county-54-troms-og-finnmark",
+    "type": "county",
+    "name": "Troms og Finnmark",
+    "countyNumber": "54",
+    "administrativeCenter": "Tromsø",
+    "validTo": 2023,
+    "todayPartOfNames": [
+      "Troms",
+      "Finnmark"
+    ],
+    "changeType": "merged",
+    "sourceUrl": "https://no.wikipedia.org/wiki/Norges_fylker",
+    "wikipediaUrl": "https://no.wikipedia.org/wiki/Troms_og_Finnmark",
+    "todayPartOfIds": [
+      "55",
+      "56"
+    ]
+  }
+]
