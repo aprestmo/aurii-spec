@@ -12,9 +12,17 @@
     "lint": "bunx @biomejs/biome lint src/"
   },
   "dependencies": {
+    "@astrojs/check": "^0.9.9",
+    "@astrojs/node": "^10",
     "@aurii/sdk": "workspace:*",
-    "@astrojs/check": "^0.9.0",
-    "astro": "^5.0.0",
+    "@tabler/icons": "^3",
+    "@tailwindcss/forms": "^0.5",
+    "@tailwindcss/vite": "^4",
+    "astro": "^6",
+    "tailwind-merge": "^3",
+    "tailwind-variants": "^3",
+    "tailwindcss": "^4",
+    "tw-animate-css": "^1",
     "typescript": "^6.0.3"
   }
 }

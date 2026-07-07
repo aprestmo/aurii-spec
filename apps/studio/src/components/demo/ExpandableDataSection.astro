@@ -1,0 +1,133 @@
+---
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/starwind/card";
+import { Button } from "@/components/starwind/button";
+
+interface Props {
+  id: string;
+  title: string;
+  description?: string;
+  initialRows?: number;
+}
+
+const { id, title, description, initialRows = 20 } = Astro.props;
+const contentId = `${id}-content`;
+---
+
+<Card data-expandable-root id={id} data-initial-rows={initialRows}>
+  <CardHeader class="gap-1">
+    <div class="flex items-center justify-between gap-3">
+      <CardTitle class="text-base">{title}</CardTitle>
+      <div class="text-xs text-muted-foreground">
+        <span data-expandable-count>0</span>
+      </div>
+    </div>
+    {description ? <CardDescription>{description}</CardDescription> : null}
+  </CardHeader>
+  <CardContent>
+    <div
+      class="overflow-hidden transition-[max-height] duration-300 ease-out"
+      data-expandable-viewport
+      style={`max-height: 0px;`}
+    >
+      <div class="overflow-x-auto" id={contentId} data-expandable-content>
+        <table class="w-full text-sm">
+          <thead>
+            <slot name="head" />
+          </thead>
+          <tbody data-expandable-body />
+        </table>
+      </div>
+    </div>
+  </CardContent>
+  <CardFooter class="flex items-center justify-between">
+    <div class="text-xs text-muted-foreground" data-expandable-footer />
+    <Button
+      type="button"
+      variant="secondary"
+      size="sm"
+      data-expandable-toggle
+      aria-controls={contentId}
+      aria-expanded="false"
+    >
+      View more
+    </Button>
+  </CardFooter>
+</Card>
+
+<script>
+  const root = document.currentScript?.previousElementSibling;
+  if (!(root instanceof HTMLElement)) {
+    // eslint-disable-next-line no-console
+    console.warn("ExpandableDataSection missing root element");
+  } else {
+    const initialRows = Number(root.dataset.initialRows ?? "20");
+    const viewport = root.querySelector("[data-expandable-viewport]");
+    const body = root.querySelector("[data-expandable-body]");
+    const toggle = root.querySelector("[data-expandable-toggle]");
+    const countEl = root.querySelector("[data-expandable-count]");
+    const footerEl = root.querySelector("[data-expandable-footer]");
+
+    let expanded = false;
+
+    function getRows() {
+      return body ? Array.from(body.querySelectorAll("tr[data-row-index]")) : [];
+    }
+
+    function applyCollapsedVisibility() {
+      const rows = getRows();
+      rows.forEach((tr) => {
+        const idx = Number(tr.getAttribute("data-row-index") ?? "0");
+        tr.classList.toggle("hidden", !expanded && idx >= initialRows);
+      });
+    }
+
+    function setViewportHeight() {
+      if (!(viewport instanceof HTMLElement)) return;
+      viewport.style.maxHeight = "0px";
+      requestAnimationFrame(() => {
+        const content = viewport.firstElementChild;
+        if (!(content instanceof HTMLElement)) return;
+        viewport.style.maxHeight = `${content.scrollHeight}px`;
+      });
+    }
+
+    function updateText() {
+      const rows = getRows();
+      const total = rows.length;
+      const shown = expanded ? total : Math.min(total, initialRows);
+      if (countEl) countEl.textContent = `${shown} of ${total}`;
+      if (footerEl) footerEl.textContent = total > 0 ? `Showing ${shown} of ${total}` : "";
+      if (toggle instanceof HTMLElement) {
+        toggle.textContent = expanded ? "View less" : total > initialRows ? `View ${total - initialRows} more` : "View more";
+        toggle.toggleAttribute("disabled", total <= initialRows);
+        toggle.setAttribute("aria-expanded", expanded ? "true" : "false");
+      }
+    }
+
+    function recalc() {
+      applyCollapsedVisibility();
+      updateText();
+      setViewportHeight();
+    }
+
+    // First measurement
+    recalc();
+
+    if (toggle) {
+      toggle.addEventListener("click", () => {
+        expanded = !expanded;
+        recalc();
+      });
+    }
+
+    root.addEventListener("expandable:recalculate", recalc);
+  }
+</script>
+

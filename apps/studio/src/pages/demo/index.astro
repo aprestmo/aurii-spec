@@ -1,0 +1,153 @@
+---
+import DemoLayout from "@/layouts/DemoLayout.astro";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/starwind/card";
+import { Button } from "@/components/starwind/button";
+import { Input } from "@/components/starwind/input";
+---
+
+<DemoLayout title="Demo">
+  <section class="grid gap-6">
+    <div class="rounded-2xl border bg-card p-8">
+      <div class="max-w-2xl space-y-4">
+        <p class="text-sm font-medium text-muted-foreground">Aurii</p>
+        <h1 class="text-3xl font-semibold tracking-tight sm:text-4xl">
+          Declarative Runtime for Structured Knowledge
+        </h1>
+        <p class="text-base text-muted-foreground">
+          Aurii unifies multiple structured datasets into a single navigable knowledge graph — with schemas, relationships,
+          and queries as first-class concepts.
+        </p>
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <a href="/demo/municipalities">
+            <Button size="lg">Browse municipalities</Button>
+          </a>
+          <a href="/demo/municipalities">
+            <Button size="lg" variant="secondary">Explore relationships</Button>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-lg font-semibold tracking-tight">Featured datasets</h2>
+      <p class="mt-1 text-sm text-muted-foreground">A preview of what’s available in the current dataset.</p>
+      <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <Card data-feature-card="municipality">
+          <CardHeader>
+            <CardTitle>Municipalities</CardTitle>
+            <CardDescription>Administrative areas with rich metadata and links to related datasets.</CardDescription>
+          </CardHeader>
+          <CardContent class="text-3xl font-semibold" data-count>—</CardContent>
+        </Card>
+        <Card data-feature-card="county">
+          <CardHeader>
+            <CardTitle>Counties</CardTitle>
+            <CardDescription>Parent regions used to group municipalities.</CardDescription>
+          </CardHeader>
+          <CardContent class="text-3xl font-semibold" data-count>—</CardContent>
+        </Card>
+        <Card data-feature-card="postal">
+          <CardHeader>
+            <CardTitle>Postal codes</CardTitle>
+            <CardDescription>Postal places and categories linked back to municipalities.</CardDescription>
+          </CardHeader>
+          <CardContent class="text-3xl font-semibold" data-count>—</CardContent>
+        </Card>
+        <Card data-feature-card="school">
+          <CardHeader>
+            <CardTitle>Schools</CardTitle>
+            <CardDescription>Educational entities connected to their municipalities.</CardDescription>
+          </CardHeader>
+          <CardContent class="text-3xl font-semibold" data-count>—</CardContent>
+        </Card>
+        <Card data-feature-card="kindergarten">
+          <CardHeader>
+            <CardTitle>Kindergartens</CardTitle>
+            <CardDescription>Kindergarten registry entries with ownership and address details.</CardDescription>
+          </CardHeader>
+          <CardContent class="text-3xl font-semibold" data-count>—</CardContent>
+        </Card>
+      </div>
+    </div>
+
+    <div class="rounded-2xl border bg-card p-6">
+      <h2 class="text-lg font-semibold tracking-tight">Search</h2>
+      <p class="mt-1 text-sm text-muted-foreground">Quickly jump to a municipality.</p>
+      <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div class="flex-1">
+          <Input id="demo-search" placeholder="Search municipalities (name or number)…" />
+        </div>
+        <a href="/demo/municipalities">
+          <Button variant="secondary">Open list</Button>
+        </a>
+      </div>
+      <div class="mt-3 text-sm text-muted-foreground" id="demo-search-hint"></div>
+    </div>
+  </section>
+
+  <script>
+    import { getClient } from "../../lib/client";
+    import { getDataset } from "../../lib/api";
+    import type { SchemaStats } from "@aurii/sdk";
+
+    const client = getClient();
+    const dataset = getDataset();
+
+    type SchemaLite = { id: string; name: string; count: number };
+
+    function pickSchemaId(schemas: SchemaLite[], patterns: string[]): string | null {
+      const lower = schemas.map((s) => ({ ...s, _k: `${s.id} ${s.name}`.toLowerCase() }));
+      for (const p of patterns) {
+        const found = lower.find((s) => s._k.includes(p));
+        if (found) return found.id;
+      }
+      return null;
+    }
+
+    async function loadCounts() {
+      try {
+        const stats = await client.stats.get(dataset);
+        const schemas: SchemaLite[] = stats.schemas.map((s: SchemaStats) => ({
+          id: s.schemaId,
+          name: s.name,
+          count: s.count,
+        }));
+
+        const ids = {
+          municipality: pickSchemaId(schemas, ["municipality", "kommune"]),
+          county: pickSchemaId(schemas, ["county", "fylke"]),
+          postal: pickSchemaId(schemas, ["postal-code", "postalcode", "postnummer", "postal"]),
+          school: pickSchemaId(schemas, ["school", "skole"]),
+          kindergarten: pickSchemaId(schemas, ["kindergarten", "barnehage"]),
+        };
+
+        Object.entries(ids).forEach(([key, schemaId]) => {
+          const card = document.querySelector(`[data-feature-card="${key}"]`);
+          const el = card?.querySelector("[data-count]");
+          if (!el) return;
+          if (!schemaId) {
+            el.textContent = "—";
+            return;
+          }
+          const schema = schemas.find((s) => s.id === schemaId);
+          el.textContent = schema ? String(schema.count) : "—";
+        });
+      } catch {
+        // ignore (API may be offline)
+      }
+    }
+
+    loadCounts();
+
+    // lightweight search hint (no autocomplete yet)
+    const input = document.getElementById("demo-search") as HTMLInputElement | null;
+    const hint = document.getElementById("demo-search-hint");
+    if (input && hint) {
+      input.addEventListener("input", () => {
+        const q = input.value.trim();
+        hint.textContent = q ? `Tip: open the list and search for “${q}”.` : "";
+      });
+    }
+  </script>
+</DemoLayout>
+

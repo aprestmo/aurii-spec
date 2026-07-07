@@ -1,0 +1,305 @@
+---
+export const prerender = false;
+
+import DemoLayout from "@/layouts/DemoLayout.astro";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/starwind/card";
+import ExpandableDataSection from "@/components/demo/ExpandableDataSection.astro";
+
+const { id } = Astro.params;
+---
+
+<DemoLayout title={`Municipality ${id}`}>
+  <div class="space-y-6">
+    <div class="flex items-center gap-3 text-sm text-muted-foreground">
+      <a href="/demo" class="hover:underline">Demo</a>
+      <span>/</span>
+      <a href="/demo/municipalities" class="hover:underline">Municipalities</a>
+      <span>/</span>
+      <span class="font-mono text-foreground">{id}</span>
+    </div>
+
+    <Card>
+      <CardHeader class="gap-2">
+        <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+          <div class="space-y-1">
+            <CardTitle class="text-xl" id="m-name">Loading…</CardTitle>
+            <div class="text-sm text-muted-foreground" id="m-subtitle"></div>
+          </div>
+          <div class="flex flex-wrap gap-2 text-xs">
+            <span class="rounded-md border px-2 py-1 font-mono" id="m-dataset">dataset: —</span>
+            <span class="rounded-md border px-2 py-1 font-mono" id="m-source">source: —</span>
+            <span class="rounded-md border px-2 py-1 font-mono" id="m-imported">imported: —</span>
+            <span class="rounded-md border px-2 py-1 font-mono" id="m-status">status: —</span>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4" id="metric-grid"></div>
+      </CardContent>
+    </Card>
+
+    <Card>
+      <CardHeader>
+        <CardTitle class="text-base">Municipality information</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm" id="meta-table">
+            <tbody></tbody>
+          </table>
+        </div>
+      </CardContent>
+    </Card>
+
+    <ExpandableDataSection id="postal-codes" title="Postal codes" description="Postal places linked to this municipality." initialRows={20}>
+      <tr slot="head">
+        <th class="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Postal code</th>
+        <th class="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Place</th>
+        <th class="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Category</th>
+        <th class="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Municipality</th>
+      </tr>
+    </ExpandableDataSection>
+
+    <ExpandableDataSection id="schools" title="Schools" description="Schools related to this municipality." initialRows={10}>
+      <tr slot="head">
+        <th class="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Name</th>
+        <th class="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Type</th>
+        <th class="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Organisation</th>
+        <th class="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Address</th>
+        <th class="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Municipality</th>
+      </tr>
+    </ExpandableDataSection>
+
+    <ExpandableDataSection id="kindergartens" title="Kindergartens" description="Kindergartens related to this municipality." initialRows={10}>
+      <tr slot="head">
+        <th class="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Name</th>
+        <th class="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Organisation</th>
+        <th class="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Owner</th>
+        <th class="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Type</th>
+        <th class="px-3 py-2 text-left text-xs font-medium text-muted-foreground">Address</th>
+      </tr>
+    </ExpandableDataSection>
+  </div>
+
+  <script>
+    import { getClient } from "../../../lib/client";
+    import { getDataset } from "../../../lib/api";
+    import type { StoredSchema } from "@aurii/sdk";
+
+    const municipalityId = "{id}";
+    const dataset = getDataset();
+    const client = getClient();
+
+    function escapeHtml(s: unknown): string {
+      return String(s).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
+    }
+
+    function getValue(
+      data: Record<string, unknown> | undefined,
+      keys: string[]
+    ): unknown | null {
+      for (const k of keys) {
+        const v = data?.[k];
+        if (v !== undefined && v !== null && v !== "") return v;
+      }
+      return null;
+    }
+
+    function asText(v: unknown): string {
+      if (v === null || v === undefined) return "—";
+      if (typeof v === "string" || typeof v === "number" || typeof v === "boolean") return String(v);
+      return JSON.stringify(v);
+    }
+
+    type SchemaLite = { id: string; name: string };
+
+    function pickSchemaId(schemas: SchemaLite[], patterns: string[]): string | null {
+      const lower = schemas.map((s) => ({ ...s, _k: `${s.id} ${s.name}`.toLowerCase() }));
+      for (const p of patterns) {
+        const found = lower.find((s) => s._k.includes(p));
+        if (found) return found.id;
+      }
+      return null;
+    }
+
+    function findForeignKey(schema: StoredSchema, targets: string[]): string | null {
+      const fields = schema?.fields ?? [];
+      const lower = fields.map((f) => ({ ...f, _k: String(f.name).toLowerCase() }));
+      for (const t of targets) {
+        const found = lower.find((f) => f._k === t || f._k.includes(t));
+        if (found) return found.name;
+      }
+      return null;
+    }
+
+    function setText(id: string, text: string) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = text;
+    }
+
+    function renderMetricGrid(m: { data: Record<string, unknown> }) {
+      const grid = document.getElementById("metric-grid");
+      if (!grid) return;
+      const items = [
+        { label: "Population", value: asText(getValue(m.data, ["population", "innbyggere"])) },
+        { label: "Area", value: asText(getValue(m.data, ["area", "areaKm2", "areal"])) },
+        { label: "Administrative centre", value: asText(getValue(m.data, ["adminCentre", "administrativeCentre", "administrasjonssenter"])) },
+        { label: "Language", value: asText(getValue(m.data, ["language", "sprak", "målform", "maalform"])) },
+        { label: "Postal codes", value: "—", id: "metric-postal" },
+        { label: "Schools", value: "—", id: "metric-schools" },
+        { label: "Kindergartens", value: "—", id: "metric-kindergartens" },
+      ];
+
+      grid.innerHTML = items
+        .map((i) => `
+          <div class="rounded-xl border bg-card p-4">
+            <div class="text-xs font-medium text-muted-foreground">${escapeHtml(i.label)}</div>
+            <div class="mt-1 text-lg font-semibold tracking-tight" ${i.id ? `id="${i.id}"` : ""}>${escapeHtml(i.value)}</div>
+          </div>
+        `)
+        .join("");
+    }
+
+    function renderMetadataTable(m: { data: Record<string, unknown> }) {
+      const tbody = document.querySelector("#meta-table tbody");
+      if (!tbody) return;
+      const entries = Object.entries(m.data ?? {}).sort(([a], [b]) => a.localeCompare(b));
+      tbody.innerHTML = entries
+        .map(([k, v]) => `
+          <tr class="border-b last:border-b-0">
+            <td class="w-64 whitespace-nowrap px-3 py-2 text-xs font-medium text-muted-foreground">${escapeHtml(k)}</td>
+            <td class="px-3 py-2 font-mono text-xs">${escapeHtml(asText(v))}</td>
+          </tr>
+        `)
+        .join("");
+    }
+
+    function fillSectionRows(sectionId: string, rowsHtml: string): void {
+      const root = document.getElementById(sectionId);
+      const body = root?.querySelector("[data-expandable-body]");
+      if (!body) return;
+      body.innerHTML = rowsHtml;
+      root?.dispatchEvent(new CustomEvent("expandable:recalculate"));
+    }
+
+    async function load() {
+      const schemas = await client.schemas.list(dataset);
+      const municipalitySchemaId = pickSchemaId(schemas, ["municipality", "kommune"]);
+      if (!municipalitySchemaId) throw new Error("No municipality schema found");
+
+      const municipalityRes = await client.query.run(
+        `from ${municipalitySchemaId} where id == "${municipalityId}" limit 1`,
+        dataset
+      );
+      const m = municipalityRes.entities[0];
+      if (!m) throw new Error("Municipality not found");
+
+      const name = asText(getValue(m.data, ["name", "municipalityName", "kommunenavn"]));
+      const number = asText(getValue(m.data, ["municipalityNumber", "number", "kommunenummer"]));
+      const county = asText(getValue(m.data, ["countyName", "county", "fylke"]));
+      const countyNo = asText(getValue(m.data, ["countyNumber", "fylkenummer"]));
+
+      setText("m-name", name);
+      setText("m-subtitle", `Municipality no. ${number} · County: ${county} ${countyNo !== "—" ? `(${countyNo})` : ""}`);
+
+      setText("m-dataset", `dataset: ${m.datasetId ?? dataset}`);
+      setText("m-source", `source: ${asText(getValue(m.data, ["source"]))}`);
+      setText("m-imported", `imported: ${asText(getValue(m.data, ["importedAt", "importDate"]))}`);
+      setText("m-status", `status: ${asText(m.state ?? "active")}`);
+
+      renderMetricGrid(m);
+      renderMetadataTable(m);
+
+      const postalSchemaId = pickSchemaId(schemas, ["postal-code", "postalcode", "postnummer", "postal"]);
+      const schoolSchemaId = pickSchemaId(schemas, ["school", "skole"]);
+      const kindergartenSchemaId = pickSchemaId(schemas, ["kindergarten", "barnehage"]);
+
+      const [postalSchema, schoolSchema, kindergartenSchema] = await Promise.all([
+        postalSchemaId ? client.schemas.get(postalSchemaId, dataset) : Promise.resolve(null),
+        schoolSchemaId ? client.schemas.get(schoolSchemaId, dataset) : Promise.resolve(null),
+        kindergartenSchemaId ? client.schemas.get(kindergartenSchemaId, dataset) : Promise.resolve(null),
+      ]);
+
+      const postalKey = postalSchema ? findForeignKey(postalSchema, ["municipalityid", "municipality", "kommunenummer"]) : null;
+      const schoolKey = schoolSchema ? findForeignKey(schoolSchema, ["municipalityid", "municipality", "kommunenummer"]) : null;
+      const kindergartenKey = kindergartenSchema ? findForeignKey(kindergartenSchema, ["municipalityid", "municipality", "kommunenummer"]) : null;
+
+      const [postalRes, schoolRes, kindergartenRes] = await Promise.all([
+        postalSchemaId && postalKey
+          ? client.query.run(`from ${postalSchemaId} where ${postalKey} == "${municipalityId}"`, dataset)
+          : Promise.resolve({ entities: [] }),
+        schoolSchemaId && schoolKey
+          ? client.query.run(`from ${schoolSchemaId} where ${schoolKey} == "${municipalityId}"`, dataset)
+          : Promise.resolve({ entities: [] }),
+        kindergartenSchemaId && kindergartenKey
+          ? client.query.run(`from ${kindergartenSchemaId} where ${kindergartenKey} == "${municipalityId}"`, dataset)
+          : Promise.resolve({ entities: [] }),
+      ]);
+
+      const postalRows = postalRes.entities
+        .map((e, idx) => {
+          const code = asText(getValue(e.data, ["postalCode", "code", "postnummer"]));
+          const place = asText(getValue(e.data, ["postalPlace", "place", "poststed"]));
+          const category = asText(getValue(e.data, ["category", "type"]));
+          const mun = asText(getValue(e.data, ["municipalityName", "municipality", "kommunenavn"])) || name;
+          return `<tr data-row-index="${idx}" class="border-b last:border-b-0">
+            <td class="px-3 py-2 font-mono text-xs">${escapeHtml(code)}</td>
+            <td class="px-3 py-2">${escapeHtml(place)}</td>
+            <td class="px-3 py-2">${escapeHtml(category)}</td>
+            <td class="px-3 py-2">${escapeHtml(mun)}</td>
+          </tr>`;
+        })
+        .join("");
+      fillSectionRows("postal-codes", postalRows);
+
+      const schoolRows = schoolRes.entities
+        .map((e, idx) => {
+          const n = asText(getValue(e.data, ["name", "schoolName", "navn"]));
+          const t = asText(getValue(e.data, ["type", "schoolType", "skoleType"]));
+          const org = asText(getValue(e.data, ["organisationNumber", "orgnr", "orgNumber"]));
+          const addr = asText(getValue(e.data, ["address", "streetAddress", "adresse"]));
+          const mun = asText(getValue(e.data, ["municipalityName", "municipality", "kommunenavn"])) || name;
+          return `<tr data-row-index="${idx}" class="border-b last:border-b-0">
+            <td class="px-3 py-2 font-medium">${escapeHtml(n)}</td>
+            <td class="px-3 py-2">${escapeHtml(t)}</td>
+            <td class="px-3 py-2 font-mono text-xs">${escapeHtml(org)}</td>
+            <td class="px-3 py-2">${escapeHtml(addr)}</td>
+            <td class="px-3 py-2">${escapeHtml(mun)}</td>
+          </tr>`;
+        })
+        .join("");
+      fillSectionRows("schools", schoolRows);
+
+      const kindergartenRows = kindergartenRes.entities
+        .map((e, idx) => {
+          const n = asText(getValue(e.data, ["name", "navn"]));
+          const org = asText(getValue(e.data, ["organisationNumber", "orgnr", "orgNumber"]));
+          const owner = asText(getValue(e.data, ["owner", "eier"]));
+          const t = asText(getValue(e.data, ["type", "barnehageType"]));
+          const addr = asText(getValue(e.data, ["address", "streetAddress", "adresse"]));
+          return `<tr data-row-index="${idx}" class="border-b last:border-b-0">
+            <td class="px-3 py-2 font-medium">${escapeHtml(n)}</td>
+            <td class="px-3 py-2 font-mono text-xs">${escapeHtml(org)}</td>
+            <td class="px-3 py-2">${escapeHtml(owner)}</td>
+            <td class="px-3 py-2">${escapeHtml(t)}</td>
+            <td class="px-3 py-2">${escapeHtml(addr)}</td>
+          </tr>`;
+        })
+        .join("");
+      fillSectionRows("kindergartens", kindergartenRows);
+
+      const postalMetric = document.getElementById("metric-postal");
+      if (postalMetric) postalMetric.textContent = String(postalRes.entities.length);
+      const schoolMetric = document.getElementById("metric-schools");
+      if (schoolMetric) schoolMetric.textContent = String(schoolRes.entities.length);
+      const kindergartenMetric = document.getElementById("metric-kindergartens");
+      if (kindergartenMetric) kindergartenMetric.textContent = String(kindergartenRes.entities.length);
+    }
+
+    load().catch((e) => {
+      setText("m-name", "Failed to load");
+      setText("m-subtitle", String(e));
+    });
+  </script>
+</DemoLayout>
+
